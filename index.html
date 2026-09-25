@@ -663,8 +663,8 @@
         <span class="phase-num">03</span>
         <h2 class="phase-title">Link cells</h2>
       </div>
-      <p><code>redirect</code>/<code>color</code> accept either one fixed value, or an array of
-        <code>MatchedRule</code> objects evaluated against the cell's own value &mdash; first match wins.</p>
+      <p>This is the whole usable surface today &mdash; a handful of fields the type accepts are
+        currently disconnected from what renders. See below.</p>
       <div class="snippet">
         <div class="snippet-label">TableMeta.link[]</div>
         <pre>{
@@ -673,36 +673,29 @@
       "columns": ["Link"],
       "config": {
         "url": "https://dummyjson.com/auth/login",
-        "method": "POST",
-        "headers": { "Content-Type": "application/json" },
-        "body": "{\"username\":\"emilys\",\"password\":\"emilyspass\",\"expiresInMins\":30}",
-        "credentials": "include",
-        "style": "plain",
-        "redirect": [
-          { "value": "e", "style": "contain", "match": "broad", "redirectOption": "external" }
-        ],
-        "color": [
-          { "value": "e", "style": "contain", "match": "broad", "colorOption": "success" },
-          { "value": "r", "colorOption": "danger" }
-        ]
+        "style": "plain"
       }
     }
   ]
 }</pre>
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Field</th><th>Valid values</th></tr></thead>
-          <tbody>
-            <tr><td><code>redirectOption</code></td><td><code>external</code> &middot; <code>internal</code> &middot; <code>window</code></td></tr>
-            <tr><td><code>colorOption</code></td><td><code>success</code> &middot; <code>warning</code> &middot; <code>foreground</code> &middot; <code>primary</code> &middot; <code>secondary</code> &middot; <code>danger</code></td></tr>
-            <tr><td>rule <code>style</code></td><td><code>exac</code> &middot; <code>startWith</code> &middot; <code>endWith</code> &middot; <code>contain</code></td></tr>
-            <tr><td>rule <code>match</code></td><td><code>exac</code> &middot; <code>broad</code> &middot; <code>phrase</code></td></tr>
-          </tbody>
-        </table>
+      <div class="callout">
+        <span class="flag">Not wired up</span>
+        <div>
+          <p><code>TableMetaLinkConfig</code> also types <code>redirect</code>/<code>color</code>
+            (<code>MatchedRule[]</code> &mdash; match the cell's own value, pick a
+            <code>redirectOption</code>/<code>colorOption</code>) and <code>method</code>/
+            <code>headers</code>/<code>body</code>/<code>credentials</code> (fetch-shaped options
+            reading like an earlier "POST an authenticated request" design). None of these
+            currently affect what renders: <code>redirect</code>/<code>color</code> are computed
+            by <code>components/ui/table/cell/index.tsx</code> but the props that would apply them
+            (<code>color=</code>, <code>isExternal=</code>, <code>showAnchorIcon=</code>) are
+            commented out, with a <code>// TODO: wire up</code> note (a HeroUI v2&rarr;v3 Link prop
+            migration leftover). The fetch-shaped fields are never used at all &mdash; the renderer
+            only ever reads <code>url</code> for the <code>href</code>. <code>[key: string]: any</code>
+            on the type means none of this is rejected, just silently ignored.</p>
+        </div>
       </div>
-      <p><code>TableMetaLinkConfig</code> also has a <code>[key: string]: any</code> escape hatch:
-        <code>credentials</code> above isn't a named field, just passed through.</p>
       <div class="result-box">
         <div class="result-label">Rendered result &mdash; <code>style: "plain"</code> (the default). <code>data-rac</code>/<code>data-react-aria-pressable</code> are React Aria Components internals from HeroUI's Link, not authored</div>
         <a class="link flex mx-2 after:rounded-sm justify-center hover:underline" style="color:var(--signal-ink);" data-rac="" href="https://dummyjson.com/auth/login" tabindex="0" data-react-aria-pressable="true">https://dummyjson.com/auth/login</a>
@@ -831,9 +824,6 @@
       "columns": ["Link"],
       "config": {
         "url": "https://dummyjson.com/auth/login",
-        "method": "POST",
-        "redirect": "external",
-        "color": "primary",
         "style": "plain"
       }
     }
