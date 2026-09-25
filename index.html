@@ -7,18 +7,18 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  // Utility classes only (rounded-full, bg-[...], flex, etc.) for the
-  // copied-from-source "rendered result" snippets below — preflight is off
-  // so Tailwind's reset never fights this page's own base typography, and
-  // dark: variants never trigger since data-theme="dark" is never set
-  // (this guide is forced light — see the design-doc thread that asked for it).
-  tailwind.config = {
-    darkMode: ["selector", '[data-theme="dark"]'],
-    corePlugins: { preflight: false },
-  };
-</script>
+<!-- The app's own compiled CSS (Tailwind + HeroUI component styles,
+     lifted straight from the built app rather than faked with a generic
+     Tailwind CDN build) — this is what makes the "rendered result" boxes
+     below match the real product pixel-for-pixel, including HeroUI
+     component classes like .textfield/.popover__trigger/.input-group that
+     a plain Tailwind CDN build has no way to generate. Loaded before this
+     page's own <style> block so this page's typography still wins the
+     cascade for the guide's own chrome (same specificity, later wins). Dark
+     mode in this stylesheet is attribute/class-based ([data-theme=dark] /
+     .dark, matching next-themes' attribute:"class" setup) — since neither
+     is ever set here, this page stays light regardless of viewer OS. -->
+<link href="app.css" rel="stylesheet">
 <style>
   :root {
     --paper: #f4f4ef;
@@ -422,11 +422,6 @@
 
   .result-row { margin-bottom: 0.9rem; }
   .result-row:last-child { margin-bottom: 0; }
-
-  /* Fallback for the app's own `border-1` utility (this app's Tailwind
-     build recognizes it; the plain CDN build may not) — guarantees the
-     copied "rendered result" snippets look right regardless. */
-  .border-1 { border-width: 1px; border-style: solid; }
 
   .value-grid {
     display: grid;
