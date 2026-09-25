@@ -466,6 +466,36 @@
   }
 
   html { scroll-behavior: smooth; }
+
+  /* ---------- Print / PDF export ----------
+     This page is designed for continuous scrolling, so a plain print-to-PDF
+     splits blocks (screenshots especially) across page boundaries. These
+     rules keep each self-contained unit — a code snippet, a callout, a
+     result box, a single image, a table row — from being cut mid-element,
+     without forcing awkward whole-page breaks between every section. */
+  @media print {
+    .rail { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--line); page-break-after: avoid; }
+    .rail nav { flex-direction: row; flex-wrap: wrap; }
+    main { padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 2rem; }
+
+    .snippet, .callout, .result-box, .table-wrap, .doc-head,
+    .value-card, img {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    /* Side-by-side screenshot groups: keep each image+caption pair intact
+       even if the whole row can't fit, instead of splitting one image
+       across two pages. */
+    .result-row { break-inside: avoid; page-break-inside: avoid; }
+    .result-row > div { break-inside: avoid; page-break-inside: avoid; }
+
+    h2.phase-title, .phase-head { break-after: avoid; page-break-after: avoid; }
+    h3 { break-after: avoid; page-break-after: avoid; }
+
+    a { color: inherit; text-decoration: none; }
+    body { background: #fff; }
+  }
 </style>
 </head>
 <body>
