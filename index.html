@@ -528,18 +528,20 @@
       page-break-inside: avoid;
     }
 
-    /* .result-box now also avoids splitting mid-box, as one unit — a box
-       that doesn't fit the remaining page moves whole to the next page
-       instead of opening with just its label and 70%+ of blank space
-       below. Multi-image rows are forced to stack (display:block) rather
-       than stay flex, which was the trigger for a separate Chromium
-       print-engine bug (a genuinely blank inserted page) when a flex row
-       with avoided children didn't fit one page — stacking sidesteps it,
-       and now that the row itself never needs to internally break, the
-       parent box can safely avoid-break as a whole too. */
-    .result-box { break-inside: avoid; page-break-inside: avoid; }
+    /* result-box itself is deliberately NOT break-inside:avoid — when a
+       box's content (several stacked screenshots) is taller than one
+       whole page, forcing the box to move/avoid-break as a unit hits a
+       genuine Chromium print-engine bug: it stops after the first child
+       and leaves the rest of the page dead blank instead of continuing
+       the flow. Letting the box split naturally between children is the
+       correct behavior here; each child individually still avoids a
+       mid-image break (the rules below). What actually caused a box to
+       "open" with only its label and mostly blank space beneath was the
+       *label* being orphaned alone near the bottom of a page — fixed by
+       keeping the label glued to whatever comes right after it instead. */
     .result-row { display: block !important; }
     .result-row > div { margin-bottom: 1rem; break-inside: avoid; page-break-inside: avoid; }
+    .result-label { break-after: avoid; page-break-after: avoid; }
 
     h2.phase-title, .phase-head { break-after: avoid; page-break-after: avoid; }
     h3 { break-after: avoid; page-break-after: avoid; }
