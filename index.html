@@ -336,9 +336,15 @@
     border-color: var(--line-strong);
   }
 
+  /* Scoped to .table-wrap deliberately — this page has no reference
+     tables of its own right now, but a live-rendered snippet (the
+     Joined-cell example, §2) reuses a bare <table><th> for fidelity to
+     the real app markup, and a global `table`/`th` rule here would
+     silently reskin that verbatim example (e.g. force it uppercase)
+     instead of leaving it exactly as the app renders it. */
   .table-wrap { overflow-x: auto; margin: 1.2rem 0 1.6rem; border: 1px solid var(--line); border-radius: 5px; }
 
-  table {
+  .table-wrap table {
     border-collapse: collapse;
     width: 100%;
     min-width: 28rem;
@@ -346,14 +352,14 @@
     background: var(--paper-raised);
   }
 
-  th, td {
+  .table-wrap th, .table-wrap td {
     text-align: left;
     padding: 0.65rem 0.9rem;
     border-bottom: 1px solid var(--line);
     vertical-align: top;
   }
 
-  th {
+  .table-wrap th {
     font-family: "IBM Plex Mono", monospace;
     font-size: 0.72rem;
     letter-spacing: 0.06em;
@@ -363,8 +369,8 @@
     font-weight: 600;
   }
 
-  tr:last-child td { border-bottom: none; }
-  td code, th code { white-space: nowrap; }
+  .table-wrap tr:last-child td { border-bottom: none; }
+  .table-wrap td code, .table-wrap th code { white-space: nowrap; }
 
   .snippet {
     margin: 1rem 0 1.6rem;
@@ -729,7 +735,7 @@
       <div class="result-box">
         <div class="result-label">Rendered result &mdash; <code>joined</code> (real output: a nested &lt;table&gt;&lt;thead&gt;, not a plain div)</div>
         <div class="result-stage">
-          <table><thead><tr><th class="flex items-center px-3 py-2 text-zinc-700 dark:text-zinc-300 whitespace-nowrap" scope="row"><div><div class="text-base font-semibold">Jane Doe</div><div class="font-normal text-zinc-600 dark:text-zinc-400">jane@example.com</div><div class="font-normal text-zinc-600 dark:text-zinc-400">Sales team</div></div></th></tr></thead></table>
+          <table style="border-collapse:collapse;"><thead><tr><th class="flex items-center px-3 py-2 text-zinc-700 dark:text-zinc-300 whitespace-nowrap" scope="row"><div><div class="text-base font-semibold">Jane Doe</div><div class="font-normal text-zinc-600 dark:text-zinc-400">jane@example.com</div><div class="font-normal text-zinc-600 dark:text-zinc-400">Sales team</div></div></th></tr></thead></table>
         </div>
       </div>
       <div class="result-box">
