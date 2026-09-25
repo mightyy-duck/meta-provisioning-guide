@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Table Meta Config Field Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f4f4ef;
+    --paper-raised: #ffffff;
+    --ink: #1c2226;
+    --ink-soft: #3a4247;
+    --steel: #5b6b73;
+    --steel-dim: #8b969b;
+    --line: #dbdcd2;
+    --line-strong: #c3c5b8;
+    --signal: #1f7a5c;
+    --signal-ink: #0f5b41;
+    --signal-tint: #e3efe9;
+    --caution: #a3661f;
+    --caution-ink: #7a4c17;
+    --caution-tint: #f6ecdc;
+    --danger: #b8402f;
+    --danger-ink: #8a2f21;
+    --danger-tint: #f8e6e1;
+    --code-bg: #1c2226;
+    --code-ink: #e8e7df;
+    --code-accent: #7fd9b9;
+    --code-muted: #8b969b;
+    --shadow: 0 1px 2px rgba(28, 34, 38, 0.06), 0 8px 24px rgba(28, 34, 38, 0.05);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #14181b;
+      --paper-raised: #1b2124;
+      --ink: #e8e7df;
+      --ink-soft: #c2c5bd;
+      --steel: #93a0a5;
+      --steel-dim: #647178;
+      --line: #2b3236;
+      --line-strong: #3a4348;
+      --signal: #3fa98a;
+      --signal-ink: #6fcaad;
+      --signal-tint: #16241f;
+      --caution: #d89a4a;
+      --caution-ink: #e8b579;
+      --caution-tint: #2a2117;
+      --danger: #e0705c;
+      --danger-ink: #f0a294;
+      --danger-tint: #2a1815;
+      --code-bg: #0e1112;
+      --code-ink: #e8e7df;
+      --code-accent: #7fd9b9;
+      --code-muted: #7e8a90;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #14181b;
+    --paper-raised: #1b2124;
+    --ink: #e8e7df;
+    --ink-soft: #c2c5bd;
+    --steel: #93a0a5;
+    --steel-dim: #647178;
+    --line: #2b3236;
+    --line-strong: #3a4348;
+    --signal: #3fa98a;
+    --signal-ink: #6fcaad;
+    --signal-tint: #16241f;
+    --caution: #d89a4a;
+    --caution-ink: #e8b579;
+    --caution-tint: #2a2117;
+    --danger: #e0705c;
+    --danger-ink: #f0a294;
+    --danger-tint: #2a1815;
+    --code-bg: #0e1112;
+    --code-ink: #e8e7df;
+    --code-accent: #7fd9b9;
+    --code-muted: #7e8a90;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", -apple-system, "Segoe UI", sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { background: var(--signal-tint); color: var(--signal-ink); }
+
+  .shell {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    max-width: 1180px;
+    margin: 0 auto;
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: 1fr; }
+  }
+
+  .rail {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 2.75rem 1.5rem 2rem 2rem;
+    border-right: 1px solid var(--line);
+  }
+
+  @media (max-width: 900px) {
+    .rail {
+      position: relative;
+      height: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--line);
+      padding: 1.75rem 1.5rem 1.25rem;
+    }
+  }
+
+  .rail-mark {
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+    text-transform: uppercase;
+    line-height: 1.1;
+  }
+
+  .rail-mark small {
+    display: block;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.7rem;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: var(--steel);
+    text-transform: none;
+    margin-top: 0.35rem;
+  }
+
+  .rail nav {
+    margin-top: 2.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  @media (max-width: 900px) {
+    .rail nav {
+      margin-top: 1.25rem;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.4rem 0.7rem;
+    }
+  }
+
+  .rail a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.55rem;
+    padding: 0.4rem 0.5rem;
+    margin-left: -0.5rem;
+    border-radius: 3px;
+    text-decoration: none;
+    color: var(--steel);
+    font-size: 0.88rem;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+
+  .rail a:hover { color: var(--ink); background: var(--paper-raised); }
+
+  .rail a.active {
+    color: var(--signal-ink);
+    background: var(--signal-tint);
+    font-weight: 600;
+  }
+
+  .rail a .num {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.75rem;
+    color: var(--steel-dim);
+    min-width: 1.3em;
+  }
+
+  .rail a.active .num { color: var(--signal); }
+
+  main {
+    padding: 3.25rem clamp(1.25rem, 4vw, 4rem) 6rem;
+    min-width: 0;
+  }
+
+  .doc-head {
+    max-width: 44rem;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--signal);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .eyebrow::before {
+    content: "";
+    width: 1.6rem;
+    height: 1px;
+    background: var(--signal);
+  }
+
+  h1.doc-title {
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.3rem, 5vw, 3.1rem);
+    line-height: 1.02;
+    letter-spacing: 0.005em;
+    margin: 0.6rem 0 0.9rem;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+
+  .doc-dek {
+    font-size: 1.08rem;
+    color: var(--ink-soft);
+    max-width: 40rem;
+    margin: 0 0 1.1rem;
+  }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.4rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.78rem;
+    color: var(--steel);
+  }
+
+  .meta-row strong { color: var(--ink-soft); font-weight: 600; }
+
+  .not-shipped {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1.1rem;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 3px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.76rem;
+    color: var(--steel);
+  }
+
+  .not-shipped::before { content: "\25CF"; color: var(--steel-dim); font-size: 0.6rem; }
+
+  section.phase {
+    max-width: 44rem;
+    margin-bottom: 3.75rem;
+    scroll-margin-top: 2rem;
+  }
+
+  .phase-head {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.1rem;
+  }
+
+  .phase-num {
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 700;
+    font-size: 2.5rem;
+    color: var(--line-strong);
+    line-height: 1;
+    min-width: 2ch;
+  }
+
+  h2.phase-title {
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 600;
+    font-size: 1.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+    margin: 1.8rem 0 0.7rem;
+  }
+
+  p { margin: 0 0 1rem; max-width: 62ch; }
+  ul, ol { margin: 0 0 1rem; padding-left: 1.3rem; }
+  li { margin-bottom: 0.4rem; max-width: 60ch; }
+  li::marker { color: var(--steel-dim); }
+
+  strong { color: var(--ink); font-weight: 600; }
+
+  a.inline-link {
+    color: var(--signal-ink);
+    text-decoration-color: var(--signal);
+    text-underline-offset: 0.15em;
+  }
+
+  code {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.86em;
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 0.05em 0.35em;
+    color: var(--signal-ink);
+  }
+
+  .callout {
+    display: flex;
+    gap: 0.9rem;
+    margin: 1.3rem 0 1.6rem;
+    padding: 1.1rem 1.3rem;
+    background: var(--caution-tint);
+    border-left: 3px solid var(--caution);
+    border-radius: 0 4px 4px 0;
+  }
+
+  .callout.danger {
+    background: var(--danger-tint);
+    border-left-color: var(--danger);
+  }
+
+  .callout.danger .flag { color: var(--danger-ink); }
+
+  .callout .flag {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--caution-ink);
+    font-weight: 600;
+    white-space: nowrap;
+    padding-top: 0.15rem;
+  }
+
+  .callout p, .callout ul { margin: 0; max-width: none; }
+  .callout p + p, .callout ul + p, .callout p + ul { margin-top: 0.6rem; }
+  .callout code {
+    background: var(--paper-raised);
+    border-color: var(--line-strong);
+  }
+
+  .table-wrap { overflow-x: auto; margin: 1.2rem 0 1.6rem; border: 1px solid var(--line); border-radius: 5px; }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 28rem;
+    font-size: 0.88rem;
+    background: var(--paper-raised);
+  }
+
+  th, td {
+    text-align: left;
+    padding: 0.65rem 0.9rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+
+  th {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--steel);
+    background: var(--paper);
+    font-weight: 600;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  td code, th code { white-space: nowrap; }
+
+  .snippet {
+    margin: 1rem 0 1.6rem;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .snippet-label {
+    background: var(--code-bg);
+    color: var(--code-muted);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.55rem 1rem 0;
+  }
+
+  pre {
+    margin: 0;
+    background: var(--code-bg);
+    color: var(--code-ink);
+    padding: 0.7rem 1.1rem 1.1rem;
+    overflow-x: auto;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.82rem;
+    line-height: 1.6;
+  }
+
+  pre .cm { color: var(--code-muted); }
+  pre .id { color: var(--code-accent); }
+
+  .value-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 0.9rem;
+    margin: 1.2rem 0 1.6rem;
+  }
+
+  .value-card {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 0.95rem 1.1rem;
+    background: var(--paper-raised);
+  }
+
+  .value-card .k {
+    display: block;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.78rem;
+    color: var(--signal-ink);
+    margin-bottom: 0.3rem;
+    word-break: break-word;
+  }
+
+  .value-card .v {
+    font-size: 0.87rem;
+    color: var(--steel);
+    margin: 0;
+  }
+
+  footer.doc-foot {
+    max-width: 44rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--line);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.76rem;
+    color: var(--steel-dim);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { scroll-behavior: auto !important; transition: none !important; }
+  }
+
+  html { scroll-behavior: smooth; }
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="rail">
+    <div class="rail-mark">
+      Field Guide
+      <small>Table meta config</small>
+    </div>
+    <nav id="railnav">
+      <a href="#top" class="active"><span class="num">&middot;</span> Overview</a>
+      <a href="#phase-0"><span class="num">00</span> Column basics</a>
+      <a href="#phase-1"><span class="num">01</span> Status rendering</a>
+      <a href="#phase-2"><span class="num">02</span> Joined / object / nested</a>
+      <a href="#phase-3"><span class="num">03</span> Link cells</a>
+      <a href="#phase-4"><span class="num">04</span> Date / time cells</a>
+      <a href="#phase-5"><span class="num">05</span> Image / truncate / disabled</a>
+      <a href="#phase-6"><span class="num">06</span> Action buttons</a>
+      <a href="#phase-7"><span class="num">07</span> Full combined example</a>
+      <a href="#open"><span class="num">&middot;</span> Open questions</a>
+    </nav>
+  </aside>
+
+  <main>
+    <div class="doc-head" id="top">
+      <div class="eyebrow">Ops reference</div>
+      <h1 class="doc-title">Table meta config: a field guide to every cell type</h1>
+      <p class="doc-dek">The one config object that decides how every column of a report table
+        renders — status pills, links, dates, nested objects, images, and action buttons.
+        Verified directly against source, with a working JSON example for every field.</p>
+      <div class="meta-row">
+        <span><strong>Verified against</strong> types/tables.d.ts, types/action-button.d.ts, configs/sidebar.tsx</span>
+        <span><strong>Scope</strong> report-table cell rendering (TableMeta)</span>
+        <span><strong>Last updated</strong> 2026-09-25</span>
+      </div>
+      <div class="not-shipped">actionButtons (&sect;6) is spec-verified, not yet field-verified in a live report</div>
+    </div>
+
+    <section class="phase" id="thesis" style="scroll-margin-top: 2rem;">
+      <h2 class="phase-title" style="margin-bottom: 1rem;">Read first: a naming collision that will confuse you otherwise</h2>
+      <div class="callout danger">
+        <span class="flag">Gotcha</span>
+        <div>
+          <p>A sidebar report node's <code>config</code> object has a <strong><code>table</code></strong>
+            key holding the <em>whole</em> meta object documented here (<code>TableMeta</code>) &mdash;
+            and <code>TableMeta</code> itself has a <strong><code>table</code></strong> key further down
+            that means something completely different: &ldquo;render this column as a nested/expandable
+            sub-table.&rdquo; Two unrelated concepts share the same name, one nested inside the other.
+            <code>config.table.table</code> is not a typo &mdash; it's <code>TableMeta.table</code>
+            (&sect;2, nested-object rendering) sitting inside <code>config.table</code> (the whole meta
+            object). Keep this straight when reading or writing config.</p>
+        </div>
+      </div>
+      <p>End-to-end flow: authored as part of a sidebar node's <code>config.table</code>
+        (<code>configs/sidebar.tsx</code>, or the equivalent Cosmos-backed sidebar document in
+        production) &rarr; delivered to the client as <code>ReportProps.config</code>
+        (<code>components/ui/table/index.tsx</code>) &rarr; read column-by-column in
+        <code>TableCellRenderer</code> (<code>components/ui/table/cell/index.tsx</code>), which
+        dispatches on <code>colname</code> against each array below to decide how that cell renders.
+        One field &mdash; <code>actionButtons</code> (&sect;6) &mdash; doesn't key off <code>colname</code>
+        at all: it renders as one synthetic trailing <code>_actions</code> column for the whole row,
+        the same pattern the built-in row-selection checkbox column (<code>_selection</code>) already
+        uses.</p>
+    </section>
+
+    <section class="phase" id="phase-0">
+      <div class="phase-head">
+        <span class="phase-num">00</span>
+        <h2 class="phase-title">Column basics</h2>
+      </div>
+      <p><code>pagination</code>, <code>paginationMode</code>, <code>sortable</code>, <code>align</code>,
+        and <code>hidden</code> &mdash; the fields that shape the table shell rather than any one cell.</p>
+      <div class="snippet">
+        <div class="snippet-label">TableMeta (partial)</div>
+        <pre>{
+  "pagination": true,
+  <span class="cm">// "offset" (numbered pager, default) or "cursor" (prev/next + continuation</span>
+  <span class="cm">// token) &mdash; "cursor" only takes effect when the report's source type is</span>
+  <span class="cm">// COSMOS; the server rejects it for anything else.</span>
+  "paginationMode": "offset",
+  "sortable": [
+    { "col": ["id"], "order": "desc" },
+    "name"  <span class="cm">// bare string = sortable, no default order</span>
+  ],
+  "align": {
+    "center": ["id", "status_dot"],
+    "end": ["amount"]
+  },
+  "hidden": ["object", "_uuid"]
+}</pre>
+      </div>
+      <p><code>align</code> keys are <code>"start" | "center" | "end"</code>. <code>hidden</code> columns
+        are still fetched but never rendered or toggle-able &mdash; different from a column simply not
+        being in the report's <code>columns</code> list.</p>
+    </section>
+
+    <section class="phase" id="phase-1">
+      <div class="phase-head">
+        <span class="phase-num">01</span>
+        <h2 class="phase-title">Status rendering</h2>
+      </div>
+      <p>Three visual treatments &mdash; <code>dot</code>, <code>tag</code>, <code>chip</code> &mdash;
+        driven by the same value-matching config. A column can only be in one of the three lists.</p>
+      <div class="snippet">
+        <div class="snippet-label">TableMeta.status</div>
+        <pre>{
+  "status": {
+    "config": {
+      "success": ["Success", "Online", "Filled", "Passed", "True", "Open"],
+      "failed": ["Failed", "Offline", "Danger", "Blocked", "Not Passed", "False", "Closed"],
+      "info": ["Info", "Information"],
+      "warning": ["Warning", "Alert", "Partially Filled"],
+      <span class="cm">// anything outside the four standard buckets gets its own exact hex</span>
+      "custom": [
+        { "value": ["Rejected"], "hex": "#6d5ae3" }
+      ]
+    },
+    "type": {
+      "dot": ["status_dot"],
+      "tag": ["status_tag"],
+      "chip": ["status_chip"]
+    }
+  }
+}</pre>
+      </div>
+    </section>
+
+    <section class="phase" id="phase-2">
+      <div class="phase-head">
+        <span class="phase-num">02</span>
+        <h2 class="phase-title">Joined, object, and nested-table cells</h2>
+      </div>
+      <p><code>joined</code> merges several source columns into one display column with a primary +
+        secondary line. <code>object</code> renders a JSON value as an expandable tree.
+        <code>table</code> (see the naming gotcha above) renders a column as a nested sub-table.</p>
+      <div class="snippet">
+        <div class="snippet-label">TableMeta (partial)</div>
+        <pre>{
+  "joined": [
+    { "head": ["name"], "sub": ["email", "normal"], "as": "joined" }
+  ],
+  "object": ["object2"],
+
+  <span class="cm">// TableMeta.table &mdash; NOT the sidebar node's config.table wrapper.</span>
+  "table": ["object_render"],
+  <span class="cm">// shorthand: a lone entry is a one-element array</span>
+  <span class="cm">// "table": "object_render",</span>
+  <span class="cm">// per-column depth override:</span>
+  <span class="cm">// "table": [{ "column": "object_render", "maxDepth": 3 }],</span>
+
+  <span class="cm">// default depth for every `table` column with no own maxDepth (fallback 5)</span>
+  "tableDefaultMaxDepth": 5,
+
+  "truncate": ["object"]
+}</pre>
+      </div>
+    </section>
+
+    <section class="phase" id="phase-3">
+      <div class="phase-head">
+        <span class="phase-num">03</span>
+        <h2 class="phase-title">Link cells</h2>
+      </div>
+      <p><code>redirect</code>/<code>color</code> accept either one fixed value, or an array of
+        <code>MatchedRule</code> objects evaluated against the cell's own value &mdash; first match wins.</p>
+      <div class="snippet">
+        <div class="snippet-label">TableMeta.link[]</div>
+        <pre>{
+  "link": [
+    {
+      "columns": ["Link"],
+      "config": {
+        "url": "https://dummyjson.com/auth/login",
+        "method": "POST",
+        "headers": { "Content-Type": "application/json" },
+        "body": "{\"username\":\"emilys\",\"password\":\"emilyspass\",\"expiresInMins\":30}",
+        "credentials": "include",
+        "style": "plain",
+        "redirect": [
+          { "value": "e", "style": "contain", "match": "broad", "redirectOption": "external" }
+        ],
+        "color": [
+          { "value": "e", "style": "contain", "match": "broad", "colorOption": "success" },
+          { "value": "r", "colorOption": "danger" }
+        ]
+      }
+    }
+  ]
+}</pre>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Field</th><th>Valid values</th></tr></thead>
+          <tbody>
+            <tr><td><code>redirectOption</code></td><td><code>external</code> &middot; <code>internal</code> &middot; <code>window</code></td></tr>
+            <tr><td><code>colorOption</code></td><td><code>success</code> &middot; <code>warning</code> &middot; <code>foreground</code> &middot; <code>primary</code> &middot; <code>secondary</code> &middot; <code>danger</code></td></tr>
+            <tr><td>rule <code>style</code></td><td><code>exac</code> &middot; <code>startWith</code> &middot; <code>endWith</code> &middot; <code>contain</code></td></tr>
+            <tr><td>rule <code>match</code></td><td><code>exac</code> &middot; <code>broad</code> &middot; <code>phrase</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><code>colorOption</code> uses the same six-color palette (<code>LinkColor</code> in
+        <code>components/ui/link/core.tsx</code>) that action buttons use in &sect;6 &mdash; one
+        palette, reused everywhere in the app rather than redefined per feature.
+        <code>TableMetaLinkConfig</code> also has a <code>[key: string]: any</code> escape hatch:
+        <code>credentials</code> above isn't a named field, just passed through.</p>
+    </section>
+
+    <section class="phase" id="phase-4">
+      <div class="phase-head">
+        <span class="phase-num">04</span>
+        <h2 class="phase-title">Date / time cells</h2>
+      </div>
+      <div class="snippet">
+        <div class="snippet-label">TableMeta.date[]</div>
+        <pre>{
+  "date": [
+    {
+      "columns": ["date2"],
+      "type": "datetime",
+      "format": "DD/MM/YYYY HH:mm:ss",
+      "timezoneConfig": {
+        "enableToggle": true,
+        "defaultView": "utc",
+        "localTimezone": "Asia/Bangkok",
+        "tabLabels": { "utc": "UTC", "local": "BKK" }
+      },
+      "constraints": {
+        "minDate": "today",
+        "disableWeekends": true
+      },
+      "pickerProps": {
+        "allowClear": false,
+        "showNow": true,
+        "placement": "bottomRight"
+      },
+      "readOnly": true,
+      "granularity": "minute",
+      "hourCycle": "24-hour"
+    }
+  ]
+}</pre>
+      </div>
+      <p><code>type</code> is <code>date | time | datetime</code> (default <code>datetime</code>).
+        <code>constraints.minDate</code>/<code>maxDate</code> accept an ISO string or the literal
+        <code>"today"</code>. <code>pickerProps</code> is a raw passthrough to the underlying date
+        picker &mdash; treat anything not shown here as unverified.</p>
+    </section>
+
+    <section class="phase" id="phase-5">
+      <div class="phase-head">
+        <span class="phase-num">05</span>
+        <h2 class="phase-title">Image, truncate, disabled</h2>
+      </div>
+      <p>Three plain <code>string[]</code> fields, no nested config.</p>
+      <div class="snippet">
+        <div class="snippet-label">TableMeta (partial)</div>
+        <pre>{
+  "image": ["avatar_url"],
+  "truncate": ["_uuid", "userAgent"],
+  "disabled": ["bank", "_uuid"]
+}</pre>
+      </div>
+      <p><code>disabled</code> removes the column from <code>columnDef</code> entirely (not just
+        hidden). <code>truncate</code> clips long text with an ellipsis. <code>image</code> renders
+        through the app's image proxy (<code>next/image</code> + <code>app/api/image-proxy</code>)
+        instead of as text.</p>
+    </section>
+
+    <section class="phase" id="phase-6">
+      <div class="phase-head">
+        <span class="phase-num">06</span>
+        <h2 class="phase-title">Action buttons</h2>
+      </div>
+      <p>Full design source of truth: <code>notes/trash/2026-09-24-optional-button-plan-v8.md</code>
+        and <code>types/action-button.d.ts</code>. Unlike every field above, <code>actionButtons</code>
+        doesn't key off <code>colname</code> &mdash; it renders as one trailing <code>_actions</code>
+        column for the whole row.</p>
+      <div class="callout">
+        <span class="flag">Core rules</span>
+        <div>
+          <ul>
+            <li><code>roles</code> on a button is <strong>visibility only</strong>. The server
+              independently re-checks roles against the resolved alias entry before executing
+              anything &mdash; a visible button is never itself an authorization decision.</li>
+            <li><code>actionRef</code> is always an opaque id. No pipeline name, endpoint URL, or
+              credential ever appears client-side &mdash; those resolve server-side, one hop, from
+              one of three per-service alias documents (<code>adf_alias_config</code>,
+              <code>azf_alias_config</code>, <code>external_api_alias_config</code>).</li>
+            <li><code>execute_api</code> is for genuinely <strong>external</strong>, third-party APIs
+              only. Anything this project itself builds is <code>azure_function</code> &mdash; Azure
+              Functions is the project's primary API mechanism.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>redirect &mdash; client-only navigation</h3>
+      <div class="snippet">
+        <pre>{
+  "id": "btn-portal",
+  "actionType": "redirect",
+  "title": "Open Portal",
+  "roles": ["user", "admin"],
+  "url": "https://example.com/",
+  "target": "_blank",
+  "style": { "variant": "secondary", "fontWeight": "bold" },
+  "icon": { "name": "external", "position": "right" }
+}</pre>
+      </div>
+      <p><code>target</code> is <code>_self | _blank</code> only &mdash; no popups, no
+        <code>_parent</code>/<code>_top</code>. <code>_blank</code> always applies
+        <code>noopener,noreferrer</code>.</p>
+
+      <h3>adf_pipeline &mdash; Azure Data Factory</h3>
+      <div class="snippet">
+        <pre>{
+  "id": "btn-run-pipeline",
+  "actionType": "adf_pipeline",
+  "title": "Run ADF Pipeline",
+  "roles": ["admin", "data_engineer"],
+  "actionRef": "callpipelist-prod",
+  "parameters": {
+    "recordId": { "fromRow": "id" },
+    "updatedBy": { "fromUser": "id" },
+    "environment": "production"
+  },
+  "refreshTableOnSuccess": true,
+  "feedback": {
+    "successMessage": "Pipeline triggered successfully.",
+    "errorMessage": "Could not trigger the pipeline."
+  },
+  "style": { "variant": "primary", "fontWeight": "semibold" },
+  "icon": { "name": "play", "position": "left" }
+}</pre>
+      </div>
+      <p>Resolves directly into <code>adf_alias_config</code>. Not testable against a local
+        emulator &mdash; verified against a real Data Factory (QA tenant or above).</p>
+
+      <h3>azure_function &mdash; this project's own APIs</h3>
+      <div class="snippet">
+        <pre>{
+  "id": "btn-recalc-billing",
+  "actionType": "azure_function",
+  "title": "Recalculate Billing",
+  "roles": ["admin", "billing_ops"],
+  "actionRef": "azf-recalc-billing",
+  "payload": { "invoiceId": { "fromRow": "id" } },
+  "refreshTableOnSuccess": true,
+  "style": { "variant": "primary" },
+  "icon": { "name": "zap", "position": "left" }
+}</pre>
+      </div>
+      <p><code>authMode</code> on the resolved alias entry is
+        <code>function_key | azure_ad_token | managed_identity | none</code> &mdash; token-based
+        today, Managed Identity is a config-only cutover once provisioned.</p>
+
+      <h3>execute_api &mdash; genuinely external APIs only</h3>
+      <div class="snippet">
+        <pre>{
+  "id": "btn-fetch-carts",
+  "actionType": "execute_api",
+  "title": "Fetch Cart Data",
+  "roles": "admin",
+  "actionRef": "carts-lookup",
+  "payload": { "collectionName": "carts" },
+  "style": { "variant": "success" },
+  "icon": { "name": "grid", "position": "left" }
+}</pre>
+      </div>
+      <p>Resolves into <code>external_api_alias_config</code>. The outbound host must be present
+        in <code>REPORTS_ALLOWED_HOSTS</code> &mdash; the same allowlist reports' own API-type
+        source already enforces.</p>
+
+      <h3>custom_callback &mdash; in-app, client-only</h3>
+      <div class="snippet">
+        <pre>{
+  "id": "btn-refresh",
+  "actionType": "custom_callback",
+  "title": "Refresh Table",
+  "handlerName": "refreshTable",
+  "style": { "variant": "foreground", "iconOnly": true },
+  "icon": { "name": "arrow" },
+  "ariaLabel": "Refresh table"
+}</pre>
+      </div>
+      <p><code>handlerName</code> resolves through a fixed, closed client-side registry &mdash;
+        never an open string-to-function lookup. No server round trip.</p>
+
+      <h3>Destructive action &mdash; confirm</h3>
+      <div class="callout danger">
+        <span class="flag">Always required</span>
+        <div>
+          <pre style="margin:0;">{
+  "id": "btn-delete-collection",
+  "actionType": "azure_function",
+  "title": "Delete Collection",
+  "roles": ["super_admin"],
+  "actionRef": "azf-collection-delete",
+  "payload": { "collectionId": { "fromRow": "id" } },
+  "confirm": { "message": "This permanently deletes the collection. Continue?" },
+  "refreshTableOnSuccess": true,
+  "style": { "variant": "danger", "fontWeight": "bold" },
+  "icon": { "name": "trash", "position": "left" }
+}</pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase" id="phase-7">
+      <div class="phase-head">
+        <span class="phase-num">07</span>
+        <h2 class="phase-title">Full combined example</h2>
+      </div>
+      <p>Every feature above, in one <code>TableMeta</code> object &mdash; extends the real config
+        already shipping in <code>configs/sidebar.tsx</code> with an <code>actionButtons</code> array.</p>
+      <div class="snippet">
+        <div class="snippet-label">config.table (full)</div>
+        <pre>{
+  "pagination": true,
+  "sortable": [{ "col": ["id"], "order": "desc" }],
+  "align": { "center": ["id"] },
+  "joined": [{ "head": ["name"], "sub": ["email", "normal"], "as": "joined" }],
+  "truncate": ["object"],
+  "status": {
+    "config": {
+      "success": ["Success", "Online"],
+      "failed": ["Failed", "Offline"],
+      "info": ["Info"],
+      "warning": ["Warning"],
+      "custom": [{ "value": ["Rejected"], "hex": "#6d5ae3" }]
+    },
+    "type": { "dot": ["status_dot"], "tag": ["status_tag"], "chip": ["status_chip"] }
+  },
+  "link": [
+    {
+      "columns": ["Link"],
+      "config": {
+        "url": "https://dummyjson.com/auth/login",
+        "method": "POST",
+        "redirect": "external",
+        "color": "primary",
+        "style": "plain"
+      }
+    }
+  ],
+  "object": ["object2"],
+  "table": ["object_render"],
+  "hidden": ["object"],
+  "date": [
+    { "columns": ["date2"], "type": "datetime", "format": "DD/MM/YYYY HH:mm:ss" }
+  ],
+  "actionButtons": [
+    {
+      "id": "btn-azf-recalc",
+      "actionType": "azure_function",
+      "title": "Recalculate",
+      "roles": ["admin"],
+      "actionRef": "azf-recalc-billing",
+      "payload": { "invoiceId": { "fromRow": "id" } },
+      "refreshTableOnSuccess": true,
+      "style": { "variant": "primary" },
+      "icon": { "name": "zap", "position": "left" }
+    },
+    {
+      "id": "btn-open",
+      "actionType": "redirect",
+      "title": "Open",
+      "url": "https://example.com/",
+      "target": "_blank",
+      "style": { "variant": "secondary" },
+      "icon": { "name": "external", "position": "right" }
+    }
+  ]
+}</pre>
+      </div>
+    </section>
+
+    <section class="phase" id="open">
+      <div class="phase-head">
+        <span class="phase-num">&middot;</span>
+        <h2 class="phase-title">Open questions</h2>
+      </div>
+      <ul>
+        <li><code>TableMetaDateTime.pickerProps</code> is a raw passthrough &mdash; this guide only
+          lists fields already used in <code>configs/sidebar.tsx</code>; the underlying date-picker
+          library likely accepts more.</li>
+        <li><code>TableMetaLinkConfig</code>'s <code>[key: string]: any</code> means any field name
+          is technically accepted &mdash; treat anything not shown in &sect;3 as unverified.</li>
+        <li><code>actionButtons</code> was added 2026-09-24 &mdash; spec-verified against
+          <code>types/action-button.d.ts</code>, not yet exercised by a real production sidebar
+          config.</li>
+      </ul>
+    </section>
+
+    <footer class="doc-foot">
+      Source repo: ACFExtension &middot; generated from notes/provisioning/table-meta-config.md
+    </footer>
+  </main>
+</div>
+
+<script>
+  (function () {
+    try {
+      var sections = Array.prototype.slice.call(document.querySelectorAll("main .phase, .doc-head"));
+      var links = document.querySelectorAll("#railnav a");
+      if (!("IntersectionObserver" in window) || sections.length === 0) return;
+
+      var map = {};
+      links.forEach(function (a) { map[a.getAttribute("href").slice(1)] = a; });
+
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              links.forEach(function (a) { a.classList.remove("active"); });
+              var link = map[entry.target.id];
+              if (link) link.classList.add("active");
+            }
+          });
+        },
+        { rootMargin: "-10% 0px -70% 0px" }
+      );
+
+      sections.forEach(function (s) { if (s.id) observer.observe(s); });
+    } catch (e) {}
+  })();
+</script>
+</body>
+</html>
