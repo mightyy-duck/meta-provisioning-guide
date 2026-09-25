@@ -478,17 +478,20 @@
     .rail nav { flex-direction: row; flex-wrap: wrap; }
     main { padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 2rem; }
 
-    .snippet, .callout, .result-box, .table-wrap, .doc-head,
+    .snippet, .callout, .table-wrap, .doc-head,
     .value-card, img {
       break-inside: avoid;
       page-break-inside: avoid;
     }
 
-    /* Side-by-side screenshot groups: keep each image+caption pair intact
-       even if the whole row can't fit, instead of splitting one image
-       across two pages. */
-    .result-row { break-inside: avoid; page-break-inside: avoid; }
-    .result-row > div { break-inside: avoid; page-break-inside: avoid; }
+    /* result-box itself is deliberately NOT break-inside:avoid — Chromium's
+       print engine renders a blank page when a flex row with avoided
+       children doesn't fit one page. Stacking multi-image rows into a
+       single column (instead of side-by-side) sidesteps that bug entirely;
+       each image individually avoiding a mid-image break (the `img` rule
+       above) is enough to keep every screenshot intact. */
+    .result-row { display: block !important; }
+    .result-row > div { margin-bottom: 1rem; break-inside: avoid; page-break-inside: avoid; }
 
     h2.phase-title, .phase-head { break-after: avoid; page-break-after: avoid; }
     h3 { break-after: avoid; page-break-after: avoid; }
