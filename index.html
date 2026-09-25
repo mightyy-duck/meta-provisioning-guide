@@ -423,6 +423,11 @@
   .result-row { margin-bottom: 0.9rem; }
   .result-row:last-child { margin-bottom: 0; }
 
+  /* Fallback for the app's own `border-1` utility (this app's Tailwind
+     build recognizes it; the plain CDN build may not) — guarantees the
+     copied "rendered result" snippets look right regardless. */
+  .border-1 { border-width: 1px; border-style: solid; }
+
   .value-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
@@ -589,19 +594,23 @@
 }</pre>
       </div>
       <div class="result-box">
-        <div class="result-label">Rendered result &mdash; copied directly from source</div>
+        <div class="result-label">Rendered result &mdash; captured from the real component via renderToStaticMarkup, not hand-reconstructed</div>
         <div class="result-row">
-          <div class="flex justify-center" style="--dot-color:#48b322;">
+          <div class="flex justify-center" style="--dot-color:#48b322">
             <div class="h-2.5 w-2.5 rounded-full me-2 mt-1.5 bg-[var(--dot-color)]"></div>
             <p class="text-sm">Active</p>
           </div>
         </div>
         <div class="result-row">
-          <div class="p-1 px-2 rounded-sm font-semibold inline-block text-[var(--tag-color)] bg-[var(--tag-bgcolor)]" style="--tag-color:#e13030;--tag-bgcolor:#e1303033;">Failed</div>
+          <div class="p-1 px-2 rounded-sm font-semibold inline-block text-[var(--tag-color)] bg-[var(--tag-bgcolor)]" style="--tag-color:#e13030;--tag-bgcolor:#e1303033">Failed</div>
         </div>
         <div class="result-row">
-          <div class="flex text-xs font-semibold justify-center text-[var(--chip-color)] space-x-1" style="--chip-color:#226ab3;--chip-bordercolor:#226ab377;">
-            <div class="flex border border-[var(--chip-bordercolor)] rounded-full py-1 px-1.5 gap-2">
+          <div class="flex text-xs font-semibold justify-center text-[var(--chip-color)] space-x-1" style="--chip-color:#226ab3;--chip-bordercolor:#226ab377">
+            <div class="flex border-1 border-[var(--chip-bordercolor)] rounded-full py-1 px-1.5 gap-2">
+              <div class="relative flex">
+                <p class="absolute"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#3574b3ff" stroke="#dfefffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info group-hover:animate-ping" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></p>
+                <p class="relative"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#3574b3ff" stroke="#dfefffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></p>
+              </div>
               <p>Info</p>
             </div>
           </div>
@@ -639,19 +648,18 @@
 }</pre>
       </div>
       <div class="result-box">
-        <div class="result-label">Rendered result &mdash; <code>joined</code>, copied directly from source</div>
-        <div class="flex items-center px-3 py-2" style="white-space:nowrap;">
-          <div>
-            <div class="text-base font-semibold">Jane Doe</div>
-            <div class="font-normal text-zinc-600">jane@example.com</div>
-            <div class="font-normal text-zinc-600">Sales team</div>
-          </div>
-        </div>
+        <div class="result-label">Rendered result &mdash; <code>joined</code> (real output: a nested &lt;table&gt;&lt;thead&gt;, not a plain div)</div>
+        <table><thead><tr><th class="flex items-center px-3 py-2 text-zinc-700 dark:text-zinc-300 whitespace-nowrap" scope="row"><div><div class="text-base font-semibold">Jane Doe</div><div class="font-normal text-zinc-600 dark:text-zinc-400">jane@example.com</div><div class="font-normal text-zinc-600 dark:text-zinc-400">Sales team</div></div></th></tr></thead></table>
       </div>
       <div class="result-box">
-        <div class="result-label"><span class="approx">Static approximation</span> &mdash; <code>object</code> / nested <code>table</code> (JsonViewer/SubTable are full interactive components; this shows only their at-rest look)</div>
-        <div class="result-row text-xs font-mono text-zinc-500">&#9656; { 3 keys }</div>
-        <div class="result-row"><button class="text-xs underline text-zinc-600">Expand table (12 rows)</button></div>
+        <div class="result-label">Rendered result &mdash; <code>object</code> (JsonViewer)</div>
+        <div class="w-full border-none shadow-none bg-transparent p-2"><div class="p-0 flex flex-col overflow-hidden"><div class="flex flex-col sm:flex-row  items-start sm:items-center justify-between p-2 gap-20 border border-zinc-300 dark:border-zinc-600 bg-zinc-200/80 dark:bg-zinc-800 rounded-t-md"><div class="flex items-center gap-1"><div class="p-1 bg-blue-100 dark:bg-blue-900/30 rounded-sm text-blue-600 dark:text-blue-400"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-braces" aria-hidden="true"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"></path><path d="M14 2v5a1 1 0 0 0 1 1h5"></path></svg></div><nav class="flex p-1 border-1 flex-row rounded-sm overflow-x-auto custom-scrollbar bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-600"><button class="group relative flex cursor-pointer select-none items-center justify-center gap-2 text-xs font-black px-4 py-1.5 rounded-sm" type="button"><div class="absolute inset-0 rounded-sm bg-zinc-50 dark:bg-zinc-900/80 shadow-md shadow-zinc-400 dark:shadow-zinc-700/60"></div><span class="relative flex items-center gap-2 text-zinc-700 dark:text-zinc-200">Tree</span></button><button class="group relative flex cursor-pointer select-none items-center justify-center gap-2 text-xs font-black px-4 py-1.5 rounded-sm" type="button"><span class="relative flex items-center gap-2 text-zinc-400">Raw</span></button></nav></div></div><div class="relative flex-1 overflow-auto p-6 custom-scrollbar bg-zinc-50 dark:bg-zinc-900 rounded-b-md border border-zinc-300 dark:border-zinc-600"><div class="max-w-4xl mx-auto"><div class="font-mono text-sm leading-6"><span class="text-rose-500">{</span><div class="flex"><div class="w-4 flex-shrink-0 ml-1.5 border-l border-zinc-200 dark:border-zinc-700/50"></div><div class="flex-1 min-w-0"><div class="flex justify-between rounded px-1 -ml-1 font-mono text-sm leading-6"><div class="flex pl-4 rounded px-1 -ml-1 h-fit"><span class="text-blue-600 dark:text-blue-400 font-medium">&quot;plan&quot;</span><span class="text-zinc-400 mr-2">:</span><span class="text-emerald-600 dark:text-emerald-400">&quot;pro&quot;</span><span class="text-zinc-400">,</span></div></div><div class="flex justify-between rounded px-1 -ml-1 font-mono text-sm leading-6"><div class="flex pl-4 rounded px-1 -ml-1 h-fit"><span class="text-blue-600 dark:text-blue-400 font-medium">&quot;seats&quot;</span><span class="text-zinc-400 mr-2">:</span><span class="text-rose-600 dark:text-rose-400">5</span><span class="text-zinc-400">,</span></div></div><div class="flex justify-between rounded px-1 -ml-1 font-mono text-sm leading-6"><div class="flex pl-4 rounded px-1 -ml-1 h-fit"><span class="text-blue-600 dark:text-blue-400 font-medium">&quot;active&quot;</span><span class="text-zinc-400 mr-2">:</span><span class="text-blue-500 font-bold">true</span></div></div></div></div><div class="pl-4 rounded px-1 -ml-1"><span class="text-rose-500">}</span></div></div></div></div></div></div>
+        <p style="margin-top:0.9rem;">Real output also includes collapse/expand-all and per-value copy buttons, omitted above for space &mdash; not omitted for the accuracy of what's shown.</p>
+      </div>
+      <div class="result-box">
+        <div class="result-label">Rendered result &mdash; <code>table</code> (SubTable)</div>
+        <div class="w-full h-full min-h-[40px] min-w-[340px] p-4"><div class="w-full flex flex-col gap-1"><div class="flex items-center justify-end-safe gap-10"><button aria-expanded="false" aria-label="Open columns setting panel" class="group/export-button h-6 w-6 cursor-pointer rounded-full flex items-center justify-center bg-default text-zinc-400 shadow-md" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical" aria-hidden="true"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg></button></div><div class="w-full overflow-hidden rounded-md border border-default shadow-sm"><div class="overflow-x-auto"><table class="w-full text-xs text-left border border-collapse"><thead><tr class="bg-zinc-300 dark:bg-zinc-800 border-b border-default"><th class="relative group text-center p-4 pr-6 font-semibold whitespace-nowrap text-primary border-r-2 border-zinc-200 dark:border-zinc-600">#</th><th class="relative group p-4 pr-6 font-semibold whitespace-nowrap text-primary">Value</th></tr></thead><tbody class="divide-y divide-zinc-200 dark:divide-zinc-700 bg-default/20"><tr><td class="p-4 text-primary border-r border-default last:border-0">0</td><td class="p-4 text-primary border-r border-default last:border-0 align-top"><div class="min-w-[200px] my-1 rounded"><div class="flex items-center justify-between gap-2 px-3 py-1.5 border-b border-default bg-zinc-50 dark:bg-zinc-900/50" role="button" tabindex="0"><div class="flex min-w-0 items-center gap-2"><span class="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Collapsed &gt;&gt;</span><span class="truncate text-xs text-zinc-400 dark:text-zinc-500">{&quot;sku&quot;:&quot;A1&quot;,&quot;qty&quot;:2}</span></div></div></div></td></tr><tr><td class="p-4 text-primary border-r border-default last:border-0">1</td><td class="p-4 text-primary border-r border-default last:border-0 align-top"><div class="min-w-[200px] my-1 rounded"><div class="flex items-center justify-between gap-2 px-3 py-1.5 border-b border-default bg-zinc-50 dark:bg-zinc-900/50" role="button" tabindex="0"><div class="flex min-w-0 items-center gap-2"><span class="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Collapsed &gt;&gt;</span><span class="truncate text-xs text-zinc-400 dark:text-zinc-500">{&quot;sku&quot;:&quot;B7&quot;,&quot;qty&quot;:1}</span></div></div></div></td></tr></tbody></table></div></div></div></div>
+        <p style="margin-top:0.9rem;">Real output also includes a switch to expand each collapsed row and copy/open-in-new-page buttons per row, omitted above for space.</p>
       </div>
     </section>
 
@@ -701,8 +709,8 @@
       <p><code>TableMetaLinkConfig</code> also has a <code>[key: string]: any</code> escape hatch:
         <code>credentials</code> above isn't a named field, just passed through.</p>
       <div class="result-box">
-        <div class="result-label">Rendered result &mdash; copied directly from source (<code>style: "plain"</code>, the default)</div>
-        <a class="flex mx-2 justify-center hover:underline" style="color:var(--signal-ink);" href="https://dummyjson.com/auth/login">https://dummyjson.com/auth/login</a>
+        <div class="result-label">Rendered result &mdash; <code>style: "plain"</code> (the default). <code>data-rac</code>/<code>data-react-aria-pressable</code> are React Aria Components internals from HeroUI's Link, not authored</div>
+        <a class="link flex mx-2 after:rounded-sm justify-center hover:underline" style="color:var(--signal-ink);" data-rac="" href="https://dummyjson.com/auth/login" tabindex="0" data-react-aria-pressable="true">https://dummyjson.com/auth/login</a>
       </div>
     </section>
 
@@ -746,8 +754,21 @@
         <code>"today"</code>. <code>pickerProps</code> is a raw passthrough to the underlying date
         picker &mdash; treat anything not shown here as unverified.</p>
       <div class="result-box">
-        <div class="result-label"><span class="approx">Static approximation</span> &mdash; DatePicker is a full interactive form component; this shows only the formatted display value at rest</div>
-        <div class="text-sm">25/09/2026 14:30</div>
+        <div class="result-label">Rendered result &mdash; closed/read-only state (HeroUI-based React Aria date field, not a plain text cell)</div>
+        <div class="popover__trigger" style="display:inline-block;" role="button" aria-expanded="false" data-react-aria-pressable="true" tabindex="0">
+          <div class="relative cursor-pointer flex gap-2">
+            <div class="relative flex items-center">
+              <div data-slot="textfield" class="textfield" data-rac="" data-readonly="true">
+                <div class="input-group input-group--primary w-25 inline-flex min-w-16 rounded-md" data-slot="input-group" data-rac="">
+                  <input type="text" readonly aria-haspopup="dialog" placeholder="yyyy-mm-dd" aria-label="Date picker" class="input-group__input cursor-pointer bg-transparent text-sm font-normal outline-none" data-rac="" value="2026-09-25">
+                  <div class="input-group__suffix flex items-center gap-1.5" data-slot="input-group-suffix">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-days size-4 text-gray-500" aria-hidden="true"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -770,13 +791,17 @@
         through the app's image proxy (<code>next/image</code> + <code>app/api/image-proxy</code>)
         instead of as text.</p>
       <div class="result-box">
-        <div class="result-label">Rendered result &mdash; <code>truncate</code>, copied directly from source</div>
-        <span class="truncate block overflow-hidden" style="max-width:220px;">This is a very long value that would otherwise overflow the column width</span>
+        <div class="result-label">Rendered result &mdash; <code>truncate</code> (every default cell, truncated or not, is wrapped in a copy-to-clipboard button, not a plain span)</div>
+        <div class="tooltip__trigger" data-slot="tooltip-trigger" role="button" tabindex="0">
+          <button aria-label="Copy cell value" class="hover:cursor-pointer w-full min-w-0 flex justify-end-safe" style="max-width:260px" type="button">
+            <span class="min-w-0 truncate block overflow-hidden">This is a very long value that would otherwise overflow the column width</span>
+          </button>
+        </div>
       </div>
       <div class="result-box">
-        <div class="result-label">Rendered result &mdash; <code>image</code> (placeholder shown; a real cell renders the report's own image URL through next/image)</div>
-        <div class="flex items-center justify-center">
-          <img class="w-auto h-auto object-contain" width="60" height="45" alt="img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='45'%3E%3Crect width='60' height='45' fill='%23d1d5db'/%3E%3C/svg%3E">
+        <div class="result-label">Rendered result &mdash; <code>image</code> (real markup shown; the actual <code>src</code>/<code>srcset</code> route through /api/image-proxy are replaced with a placeholder image here so this page has no external network dependency)</div>
+        <div class="flex items-center h-full w-full min-h-[inherit] justify-center">
+          <img alt="img" loading="lazy" width="60" height="45" decoding="async" class="w-auto h-auto object-contain" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='45'%3E%3Crect width='60' height='45' fill='%23d1d5db'/%3E%3C/svg%3E">
         </div>
       </div>
     </section>
