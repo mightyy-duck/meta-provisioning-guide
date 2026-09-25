@@ -43,6 +43,7 @@
     --code-accent: #7fd9b9;
     --code-muted: #8b969b;
     --shadow: 0 1px 2px rgba(28, 34, 38, 0.06), 0 8px 24px rgba(28, 34, 38, 0.05);
+    --content-pad-x: 1.1rem;
   }
 
   /* Forced light theme: no dark @media override, no [data-theme="dark"]
@@ -304,7 +305,7 @@
     display: flex;
     gap: 0.9rem;
     margin: 1.3rem 0 1.6rem;
-    padding: 1.1rem 1.3rem;
+    padding: 1.1rem var(--content-pad-x);
     background: var(--caution-tint);
     border-left: 3px solid var(--caution);
     border-radius: 0 4px 4px 0;
@@ -399,7 +400,7 @@
   /* ---------- Rendered-result preview boxes ---------- */
   .result-box {
     margin: 1rem 0 1.6rem;
-    padding: 1.5rem;
+    padding: 1.3rem var(--content-pad-x);
     border: 1px dashed var(--line-strong);
     border-radius: 6px;
     background: var(--paper-raised);
@@ -422,6 +423,49 @@
 
   .result-row { margin-bottom: 0.9rem; }
   .result-row:last-child { margin-bottom: 0; }
+
+  /* One shared caption style for every per-variant sub-label ("dot",
+     "chip", "raw"…) so they read as one level down from .result-label,
+     not a different typographic system. */
+  .result-sublabel {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.66rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--steel-dim);
+    margin: 0 0 0.5rem;
+  }
+
+  /* One shared max-width ceiling for every embedded screenshot so they
+     read as one family of assets regardless of each PNG's native size —
+     images narrower than this just show at their own natural width. */
+  .result-shot {
+    display: block;
+    max-width: 480px;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+  }
+
+  /* For screenshots that already carry their own app chrome (a rounded
+     card, its own border/shadow) baked into the pixels — adding our
+     border on top would double-frame the same content. */
+  .result-shot--bare {
+    border: none;
+    border-radius: 4px;
+  }
+
+  /* A plain "stage" frame for live-rendered (non-screenshot) markup —
+     gives the Joined/Link/Date/Truncate previews the same boxed
+     containment a bordered screenshot has, instead of sitting bare
+     inside the dashed .result-box. */
+  .result-stage {
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: #fff;
+  }
 
   .value-grid {
     display: grid;
@@ -479,22 +523,30 @@
     main { padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 2rem; }
 
     .snippet, .callout, .table-wrap, .doc-head,
-    .value-card, img {
+    .value-card, .result-stage, img {
       break-inside: avoid;
       page-break-inside: avoid;
     }
 
-    /* result-box itself is deliberately NOT break-inside:avoid — Chromium's
-       print engine renders a blank page when a flex row with avoided
-       children doesn't fit one page. Stacking multi-image rows into a
-       single column (instead of side-by-side) sidesteps that bug entirely;
-       each image individually avoiding a mid-image break (the `img` rule
-       above) is enough to keep every screenshot intact. */
+    /* .result-box now also avoids splitting mid-box, as one unit — a box
+       that doesn't fit the remaining page moves whole to the next page
+       instead of opening with just its label and 70%+ of blank space
+       below. Multi-image rows are forced to stack (display:block) rather
+       than stay flex, which was the trigger for a separate Chromium
+       print-engine bug (a genuinely blank inserted page) when a flex row
+       with avoided children didn't fit one page — stacking sidesteps it,
+       and now that the row itself never needs to internally break, the
+       parent box can safely avoid-break as a whole too. */
+    .result-box { break-inside: avoid; page-break-inside: avoid; }
     .result-row { display: block !important; }
     .result-row > div { margin-bottom: 1rem; break-inside: avoid; page-break-inside: avoid; }
 
     h2.phase-title, .phase-head { break-after: avoid; page-break-after: avoid; }
     h3 { break-after: avoid; page-break-after: avoid; }
+
+    /* Keep the closing footer on the same page as the content above it
+       rather than spilling onto an otherwise-empty trailing page. */
+    footer.doc-foot { break-before: avoid; page-break-before: avoid; break-inside: avoid; }
 
     a { color: inherit; text-decoration: none; }
     body { background: #fff; }
@@ -538,7 +590,10 @@
     </div>
 
     <section class="phase" id="thesis" style="scroll-margin-top: 2rem;">
-      <h2 class="phase-title" style="margin-bottom: 1rem;">Read first: a naming collision that will confuse you otherwise</h2>
+      <div class="phase-head">
+        <span class="phase-num">&middot;</span>
+        <h2 class="phase-title">Read first: a naming collision that will confuse you otherwise</h2>
+      </div>
       <div class="callout danger">
         <span class="flag">Gotcha</span>
         <div>
@@ -625,16 +680,16 @@
         <div class="result-label">Rendered result &mdash; screenshots from the real app (localhost, meta-status-dot / meta-status-chip / meta-status-tag-custom)</div>
         <div class="result-row" style="display:flex; gap:1.5rem; flex-wrap:wrap; align-items:flex-start;">
           <div>
-            <p style="font-size:0.78rem; color:var(--steel); margin-bottom:0.4rem;">dot</p>
-            <img src="img/status-dot.png" alt="Status dot cells: green Active, red Terminated, orange On Leave" style="max-width:220px; border:1px solid var(--line); border-radius:6px;">
+            <p class="result-sublabel">Dot</p>
+            <img class="result-shot" src="img/status-dot.png" alt="Status dot cells: green Active, red Terminated, orange On Leave" style="max-width:220px;">
           </div>
           <div>
-            <p style="font-size:0.78rem; color:var(--steel); margin-bottom:0.4rem;">chip</p>
-            <img src="img/status-chip.png" alt="Status chip cells: Refunded, Completed, Failed, Pending" style="max-width:220px; border:1px solid var(--line); border-radius:6px;">
+            <p class="result-sublabel">Chip</p>
+            <img class="result-shot" src="img/status-chip.png" alt="Status chip cells: Refunded, Completed, Failed, Pending" style="max-width:220px;">
           </div>
           <div>
-            <p style="font-size:0.78rem; color:var(--steel); margin-bottom:0.4rem;">tag</p>
-            <img src="img/status-tag.png" alt="Status tag cells: Standard, Preferred, Blacklisted" style="max-width:180px; border:1px solid var(--line); border-radius:6px;">
+            <p class="result-sublabel">Tag</p>
+            <img class="result-shot" src="img/status-tag.png" alt="Status tag cells: Standard, Preferred, Blacklisted" style="max-width:180px;">
           </div>
         </div>
       </div>
@@ -671,24 +726,26 @@
       </div>
       <div class="result-box">
         <div class="result-label">Rendered result &mdash; <code>joined</code> (real output: a nested &lt;table&gt;&lt;thead&gt;, not a plain div)</div>
-        <table><thead><tr><th class="flex items-center px-3 py-2 text-zinc-700 dark:text-zinc-300 whitespace-nowrap" scope="row"><div><div class="text-base font-semibold">Jane Doe</div><div class="font-normal text-zinc-600 dark:text-zinc-400">jane@example.com</div><div class="font-normal text-zinc-600 dark:text-zinc-400">Sales team</div></div></th></tr></thead></table>
+        <div class="result-stage">
+          <table><thead><tr><th class="flex items-center px-3 py-2 text-zinc-700 dark:text-zinc-300 whitespace-nowrap" scope="row"><div><div class="text-base font-semibold">Jane Doe</div><div class="font-normal text-zinc-600 dark:text-zinc-400">jane@example.com</div><div class="font-normal text-zinc-600 dark:text-zinc-400">Sales team</div></div></th></tr></thead></table>
+        </div>
       </div>
       <div class="result-box">
         <div class="result-label">Rendered result &mdash; screenshots from the real app (localhost, meta-object): Tree mode and Raw mode</div>
         <div class="result-row" style="display:flex; gap:1.5rem; flex-wrap:wrap; align-items:flex-start;">
           <div>
-            <p style="font-size:0.78rem; color:var(--steel); margin-bottom:0.4rem;">Tree</p>
-            <img src="img/object-tree.png" alt="JsonViewer in Tree mode showing a reporter/channel/tags object" style="max-width:280px; border:1px solid var(--line); border-radius:6px;">
+            <p class="result-sublabel">Tree</p>
+            <img class="result-shot result-shot--bare" src="img/object-tree.png" alt="JsonViewer in Tree mode showing a reporter/channel/tags object" style="max-width:280px;">
           </div>
           <div>
-            <p style="font-size:0.78rem; color:var(--steel); margin-bottom:0.4rem;">Raw</p>
-            <img src="img/object-raw.png" alt="JsonViewer in Raw mode showing the same object as pretty-printed JSON" style="max-width:280px; border:1px solid var(--line); border-radius:6px;">
+            <p class="result-sublabel">Raw</p>
+            <img class="result-shot result-shot--bare" src="img/object-raw.png" alt="JsonViewer in Raw mode showing the same object as pretty-printed JSON" style="max-width:280px;">
           </div>
         </div>
       </div>
       <div class="result-box">
         <div class="result-label">Rendered result &mdash; screenshot from the real app (localhost, meta-table-subtable), expanded into the 2nd nesting level</div>
-        <img src="img/nested-table-depth2.png" alt="SubTable outer table with row 0 expanded, revealing a second-level nested collapsed entry" style="max-width:520px; border:1px solid var(--line); border-radius:6px;">
+        <img class="result-shot" src="img/nested-table-depth2.png" alt="SubTable outer table with row 0 expanded, revealing a second-level nested collapsed entry">
       </div>
     </section>
 
@@ -732,7 +789,9 @@
       </div>
       <div class="result-box">
         <div class="result-label">Rendered result &mdash; <code>style: "plain"</code> (the default). <code>data-rac</code>/<code>data-react-aria-pressable</code> are React Aria Components internals from HeroUI's Link, not authored</div>
-        <a class="link flex mx-2 after:rounded-sm justify-center hover:underline" style="color:var(--signal-ink);" data-rac="" href="https://dummyjson.com/auth/login" tabindex="0" data-react-aria-pressable="true">https://dummyjson.com/auth/login</a>
+        <div class="result-stage">
+          <a class="link flex mx-2 after:rounded-sm justify-center hover:underline" style="color:var(--signal-ink);" data-rac="" href="https://dummyjson.com/auth/login" tabindex="0" data-react-aria-pressable="true">https://dummyjson.com/auth/login</a>
+        </div>
       </div>
     </section>
 
@@ -777,14 +836,16 @@
         picker &mdash; treat anything not shown here as unverified.</p>
       <div class="result-box">
         <div class="result-label">Rendered result &mdash; closed/read-only state (HeroUI-based React Aria date field, not a plain text cell)</div>
-        <div class="popover__trigger" style="display:inline-block;" role="button" aria-expanded="false" data-react-aria-pressable="true" tabindex="0">
-          <div class="relative cursor-pointer flex gap-2">
-            <div class="relative flex items-center">
-              <div data-slot="textfield" class="textfield" data-rac="" data-readonly="true">
-                <div class="input-group input-group--primary w-25 inline-flex min-w-16 rounded-md" data-slot="input-group" data-rac="">
-                  <input type="text" readonly aria-haspopup="dialog" placeholder="yyyy-mm-dd" aria-label="Date picker" class="input-group__input cursor-pointer bg-transparent text-sm font-normal outline-none" data-rac="" value="2026-09-25">
-                  <div class="input-group__suffix flex items-center gap-1.5" data-slot="input-group-suffix">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-days size-4 text-gray-500" aria-hidden="true"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>
+        <div class="result-stage">
+          <div class="popover__trigger" style="display:inline-block;" role="button" aria-expanded="false" data-react-aria-pressable="true" tabindex="0">
+            <div class="relative cursor-pointer flex gap-2">
+              <div class="relative flex items-center">
+                <div data-slot="textfield" class="textfield" data-rac="" data-readonly="true">
+                  <div class="input-group input-group--primary w-25 inline-flex min-w-16 rounded-md" data-slot="input-group" data-rac="">
+                    <input type="text" readonly aria-haspopup="dialog" placeholder="yyyy-mm-dd" aria-label="Date picker" class="input-group__input cursor-pointer bg-transparent text-sm font-normal outline-none" data-rac="" value="2026-09-25">
+                    <div class="input-group__suffix flex items-center gap-1.5" data-slot="input-group-suffix">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-days size-4 text-gray-500" aria-hidden="true"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -814,16 +875,18 @@
         instead of as text.</p>
       <div class="result-box">
         <div class="result-label">Rendered result &mdash; <code>truncate</code> (every default cell, truncated or not, is wrapped in a copy-to-clipboard button, not a plain span)</div>
-        <div class="tooltip__trigger" data-slot="tooltip-trigger" role="button" tabindex="0">
-          <button aria-label="Copy cell value" class="hover:cursor-pointer w-full min-w-0 flex justify-end-safe" style="max-width:260px" type="button">
-            <span class="min-w-0 truncate block overflow-hidden">This is a very long value that would otherwise overflow the column width</span>
-          </button>
+        <div class="result-stage">
+          <div class="tooltip__trigger" data-slot="tooltip-trigger" role="button" tabindex="0">
+            <button aria-label="Copy cell value" class="hover:cursor-pointer w-full min-w-0 flex justify-end-safe" style="max-width:260px" type="button">
+              <span class="min-w-0 truncate block overflow-hidden">This is a very long value that would otherwise overflow the column width</span>
+            </button>
+          </div>
         </div>
       </div>
       <div class="result-box">
         <div class="result-label">Rendered result &mdash; screenshot from the real app (localhost, meta-image), column image_url</div>
-        <img src="img/image-column.png" alt="IMAGE_URL column showing real Unsplash photos rendered per row, with one broken-image fallback" style="max-width:340px; border:1px solid var(--line); border-radius:6px;">
-        <p style="margin-top:0.9rem;">One row above shows the broken-image fallback &mdash; a real, occasional case (an Unsplash URL that didn't resolve for that request), not staged.</p>
+        <img class="result-shot" src="img/image-column.png" alt="IMAGE_URL column showing real Unsplash photos rendered per row, with two broken-image fallbacks visible (rows 7 and 10)">
+        <p style="margin-top:0.9rem;">Rows 7 and 10 show the broken-image fallback &mdash; a real, occasional case (an Unsplash URL that didn't resolve for that request), not staged.</p>
       </div>
     </section>
 
