@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +7,18 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  // Utility classes only (rounded-full, bg-[...], flex, etc.) for the
+  // copied-from-source "rendered result" snippets below — preflight is off
+  // so Tailwind's reset never fights this page's own base typography, and
+  // dark: variants never trigger since data-theme="dark" is never set
+  // (this guide is forced light — see the design-doc thread that asked for it).
+  tailwind.config = {
+    darkMode: ["selector", '[data-theme="dark"]'],
+    corePlugins: { preflight: false },
+  };
+</script>
 <style>
   :root {
     --paper: #f4f4ef;
@@ -33,57 +45,9 @@
     --shadow: 0 1px 2px rgba(28, 34, 38, 0.06), 0 8px 24px rgba(28, 34, 38, 0.05);
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --paper: #14181b;
-      --paper-raised: #1b2124;
-      --ink: #e8e7df;
-      --ink-soft: #c2c5bd;
-      --steel: #93a0a5;
-      --steel-dim: #647178;
-      --line: #2b3236;
-      --line-strong: #3a4348;
-      --signal: #3fa98a;
-      --signal-ink: #6fcaad;
-      --signal-tint: #16241f;
-      --caution: #d89a4a;
-      --caution-ink: #e8b579;
-      --caution-tint: #2a2117;
-      --danger: #e0705c;
-      --danger-ink: #f0a294;
-      --danger-tint: #2a1815;
-      --code-bg: #0e1112;
-      --code-ink: #e8e7df;
-      --code-accent: #7fd9b9;
-      --code-muted: #7e8a90;
-      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
-    }
-  }
-
-  :root[data-theme="dark"] {
-    --paper: #14181b;
-    --paper-raised: #1b2124;
-    --ink: #e8e7df;
-    --ink-soft: #c2c5bd;
-    --steel: #93a0a5;
-    --steel-dim: #647178;
-    --line: #2b3236;
-    --line-strong: #3a4348;
-    --signal: #3fa98a;
-    --signal-ink: #6fcaad;
-    --signal-tint: #16241f;
-    --caution: #d89a4a;
-    --caution-ink: #e8b579;
-    --caution-tint: #2a2117;
-    --danger: #e0705c;
-    --danger-ink: #f0a294;
-    --danger-tint: #2a1815;
-    --code-bg: #0e1112;
-    --code-ink: #e8e7df;
-    --code-accent: #7fd9b9;
-    --code-muted: #7e8a90;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
-  }
+  /* Forced light theme: no dark @media override, no [data-theme="dark"]
+     block — this page always renders the tokens above regardless of the
+     viewer's OS preference. */
 
   * { box-sizing: border-box; }
 
@@ -432,6 +396,33 @@
   pre .cm { color: var(--code-muted); }
   pre .id { color: var(--code-accent); }
 
+  /* ---------- Rendered-result preview boxes ---------- */
+  .result-box {
+    margin: 1rem 0 1.6rem;
+    padding: 1.5rem;
+    border: 1px dashed var(--line-strong);
+    border-radius: 6px;
+    background: var(--paper-raised);
+  }
+
+  .result-label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--steel);
+    margin-bottom: 1rem;
+  }
+
+  .result-label .approx {
+    color: var(--caution-ink);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .result-row { margin-bottom: 0.9rem; }
+  .result-row:last-child { margin-bottom: 0; }
+
   .value-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
@@ -482,7 +473,7 @@
   <aside class="rail">
     <div class="rail-mark">
       Field Guide
-      <small>Table meta config</small>
+      <small>Table meta config &middot; Phase 1</small>
     </div>
     <nav id="railnav">
       <a href="#top" class="active"><span class="num">&middot;</span> Overview</a>
@@ -492,8 +483,7 @@
       <a href="#phase-3"><span class="num">03</span> Link cells</a>
       <a href="#phase-4"><span class="num">04</span> Date / time cells</a>
       <a href="#phase-5"><span class="num">05</span> Image / truncate / disabled</a>
-      <a href="#phase-6"><span class="num">06</span> Action buttons</a>
-      <a href="#phase-7"><span class="num">07</span> Full combined example</a>
+      <a href="#phase-6"><span class="num">06</span> Full combined example</a>
       <a href="#open"><span class="num">&middot;</span> Open questions</a>
     </nav>
   </aside>
@@ -503,14 +493,15 @@
       <div class="eyebrow">Ops reference</div>
       <h1 class="doc-title">Table meta config: a field guide to every cell type</h1>
       <p class="doc-dek">The one config object that decides how every column of a report table
-        renders — status pills, links, dates, nested objects, images, and action buttons.
-        Verified directly against source, with a working JSON example for every field.</p>
+        renders &mdash; status pills, links, dates, nested objects, and images. Verified directly
+        against source, with a working JSON example <em>and</em> a live-rendered result for every
+        field.</p>
       <div class="meta-row">
-        <span><strong>Verified against</strong> types/tables.d.ts, types/action-button.d.ts, configs/sidebar.tsx</span>
+        <span><strong>Verified against</strong> types/tables.d.ts, configs/sidebar.tsx, components/ui/table/**</span>
         <span><strong>Scope</strong> report-table cell rendering (TableMeta)</span>
         <span><strong>Last updated</strong> 2026-09-25</span>
       </div>
-      <div class="not-shipped">actionButtons (&sect;6) is spec-verified, not yet field-verified in a live report</div>
+      <div class="not-shipped">Phase 1 only &mdash; action buttons (actionButtons) are Phase 2, a separate guide</div>
     </div>
 
     <section class="phase" id="thesis" style="scroll-margin-top: 2rem;">
@@ -533,11 +524,7 @@
         production) &rarr; delivered to the client as <code>ReportProps.config</code>
         (<code>components/ui/table/index.tsx</code>) &rarr; read column-by-column in
         <code>TableCellRenderer</code> (<code>components/ui/table/cell/index.tsx</code>), which
-        dispatches on <code>colname</code> against each array below to decide how that cell renders.
-        One field &mdash; <code>actionButtons</code> (&sect;6) &mdash; doesn't key off <code>colname</code>
-        at all: it renders as one synthetic trailing <code>_actions</code> column for the whole row,
-        the same pattern the built-in row-selection checkbox column (<code>_selection</code>) already
-        uses.</p>
+        dispatches on <code>colname</code> against each array below to decide how that cell renders.</p>
     </section>
 
     <section class="phase" id="phase-0">
@@ -546,7 +533,8 @@
         <h2 class="phase-title">Column basics</h2>
       </div>
       <p><code>pagination</code>, <code>paginationMode</code>, <code>sortable</code>, <code>align</code>,
-        and <code>hidden</code> &mdash; the fields that shape the table shell rather than any one cell.</p>
+        and <code>hidden</code> &mdash; the fields that shape the table shell rather than any one cell.
+        No per-cell "rendered result" here; these affect layout/behavior, not a cell's markup.</p>
       <div class="snippet">
         <div class="snippet-label">TableMeta (partial)</div>
         <pre>{
@@ -600,6 +588,25 @@
   }
 }</pre>
       </div>
+      <div class="result-box">
+        <div class="result-label">Rendered result &mdash; copied directly from source</div>
+        <div class="result-row">
+          <div class="flex justify-center" style="--dot-color:#48b322;">
+            <div class="h-2.5 w-2.5 rounded-full me-2 mt-1.5 bg-[var(--dot-color)]"></div>
+            <p class="text-sm">Active</p>
+          </div>
+        </div>
+        <div class="result-row">
+          <div class="p-1 px-2 rounded-sm font-semibold inline-block text-[var(--tag-color)] bg-[var(--tag-bgcolor)]" style="--tag-color:#e13030;--tag-bgcolor:#e1303033;">Failed</div>
+        </div>
+        <div class="result-row">
+          <div class="flex text-xs font-semibold justify-center text-[var(--chip-color)] space-x-1" style="--chip-color:#226ab3;--chip-bordercolor:#226ab377;">
+            <div class="flex border border-[var(--chip-bordercolor)] rounded-full py-1 px-1.5 gap-2">
+              <p>Info</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section class="phase" id="phase-2">
@@ -630,6 +637,21 @@
 
   "truncate": ["object"]
 }</pre>
+      </div>
+      <div class="result-box">
+        <div class="result-label">Rendered result &mdash; <code>joined</code>, copied directly from source</div>
+        <div class="flex items-center px-3 py-2" style="white-space:nowrap;">
+          <div>
+            <div class="text-base font-semibold">Jane Doe</div>
+            <div class="font-normal text-zinc-600">jane@example.com</div>
+            <div class="font-normal text-zinc-600">Sales team</div>
+          </div>
+        </div>
+      </div>
+      <div class="result-box">
+        <div class="result-label"><span class="approx">Static approximation</span> &mdash; <code>object</code> / nested <code>table</code> (JsonViewer/SubTable are full interactive components; this shows only their at-rest look)</div>
+        <div class="result-row text-xs font-mono text-zinc-500">&#9656; { 3 keys }</div>
+        <div class="result-row"><button class="text-xs underline text-zinc-600">Expand table (12 rows)</button></div>
       </div>
     </section>
 
@@ -676,11 +698,12 @@
           </tbody>
         </table>
       </div>
-      <p><code>colorOption</code> uses the same six-color palette (<code>LinkColor</code> in
-        <code>components/ui/link/core.tsx</code>) that action buttons use in &sect;6 &mdash; one
-        palette, reused everywhere in the app rather than redefined per feature.
-        <code>TableMetaLinkConfig</code> also has a <code>[key: string]: any</code> escape hatch:
+      <p><code>TableMetaLinkConfig</code> also has a <code>[key: string]: any</code> escape hatch:
         <code>credentials</code> above isn't a named field, just passed through.</p>
+      <div class="result-box">
+        <div class="result-label">Rendered result &mdash; copied directly from source (<code>style: "plain"</code>, the default)</div>
+        <a class="flex mx-2 justify-center hover:underline" style="color:var(--signal-ink);" href="https://dummyjson.com/auth/login">https://dummyjson.com/auth/login</a>
+      </div>
     </section>
 
     <section class="phase" id="phase-4">
@@ -722,6 +745,10 @@
         <code>constraints.minDate</code>/<code>maxDate</code> accept an ISO string or the literal
         <code>"today"</code>. <code>pickerProps</code> is a raw passthrough to the underlying date
         picker &mdash; treat anything not shown here as unverified.</p>
+      <div class="result-box">
+        <div class="result-label"><span class="approx">Static approximation</span> &mdash; DatePicker is a full interactive form component; this shows only the formatted display value at rest</div>
+        <div class="text-sm">25/09/2026 14:30</div>
+      </div>
     </section>
 
     <section class="phase" id="phase-5">
@@ -742,154 +769,25 @@
         hidden). <code>truncate</code> clips long text with an ellipsis. <code>image</code> renders
         through the app's image proxy (<code>next/image</code> + <code>app/api/image-proxy</code>)
         instead of as text.</p>
+      <div class="result-box">
+        <div class="result-label">Rendered result &mdash; <code>truncate</code>, copied directly from source</div>
+        <span class="truncate block overflow-hidden" style="max-width:220px;">This is a very long value that would otherwise overflow the column width</span>
+      </div>
+      <div class="result-box">
+        <div class="result-label">Rendered result &mdash; <code>image</code> (placeholder shown; a real cell renders the report's own image URL through next/image)</div>
+        <div class="flex items-center justify-center">
+          <img class="w-auto h-auto object-contain" width="60" height="45" alt="img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='45'%3E%3Crect width='60' height='45' fill='%23d1d5db'/%3E%3C/svg%3E">
+        </div>
+      </div>
     </section>
 
     <section class="phase" id="phase-6">
       <div class="phase-head">
         <span class="phase-num">06</span>
-        <h2 class="phase-title">Action buttons</h2>
-      </div>
-      <p>Full design source of truth: <code>notes/trash/2026-09-24-optional-button-plan-v8.md</code>
-        and <code>types/action-button.d.ts</code>. Unlike every field above, <code>actionButtons</code>
-        doesn't key off <code>colname</code> &mdash; it renders as one trailing <code>_actions</code>
-        column for the whole row.</p>
-      <div class="callout">
-        <span class="flag">Core rules</span>
-        <div>
-          <ul>
-            <li><code>roles</code> on a button is <strong>visibility only</strong>. The server
-              independently re-checks roles against the resolved alias entry before executing
-              anything &mdash; a visible button is never itself an authorization decision.</li>
-            <li><code>actionRef</code> is always an opaque id. No pipeline name, endpoint URL, or
-              credential ever appears client-side &mdash; those resolve server-side, one hop, from
-              one of three per-service alias documents (<code>adf_alias_config</code>,
-              <code>azf_alias_config</code>, <code>external_api_alias_config</code>).</li>
-            <li><code>execute_api</code> is for genuinely <strong>external</strong>, third-party APIs
-              only. Anything this project itself builds is <code>azure_function</code> &mdash; Azure
-              Functions is the project's primary API mechanism.</li>
-          </ul>
-        </div>
-      </div>
-
-      <h3>redirect &mdash; client-only navigation</h3>
-      <div class="snippet">
-        <pre>{
-  "id": "btn-portal",
-  "actionType": "redirect",
-  "title": "Open Portal",
-  "roles": ["user", "admin"],
-  "url": "https://example.com/",
-  "target": "_blank",
-  "style": { "variant": "secondary", "fontWeight": "bold" },
-  "icon": { "name": "external", "position": "right" }
-}</pre>
-      </div>
-      <p><code>target</code> is <code>_self | _blank</code> only &mdash; no popups, no
-        <code>_parent</code>/<code>_top</code>. <code>_blank</code> always applies
-        <code>noopener,noreferrer</code>.</p>
-
-      <h3>adf_pipeline &mdash; Azure Data Factory</h3>
-      <div class="snippet">
-        <pre>{
-  "id": "btn-run-pipeline",
-  "actionType": "adf_pipeline",
-  "title": "Run ADF Pipeline",
-  "roles": ["admin", "data_engineer"],
-  "actionRef": "callpipelist-prod",
-  "parameters": {
-    "recordId": { "fromRow": "id" },
-    "updatedBy": { "fromUser": "id" },
-    "environment": "production"
-  },
-  "refreshTableOnSuccess": true,
-  "feedback": {
-    "successMessage": "Pipeline triggered successfully.",
-    "errorMessage": "Could not trigger the pipeline."
-  },
-  "style": { "variant": "primary", "fontWeight": "semibold" },
-  "icon": { "name": "play", "position": "left" }
-}</pre>
-      </div>
-      <p>Resolves directly into <code>adf_alias_config</code>. Not testable against a local
-        emulator &mdash; verified against a real Data Factory (QA tenant or above).</p>
-
-      <h3>azure_function &mdash; this project's own APIs</h3>
-      <div class="snippet">
-        <pre>{
-  "id": "btn-recalc-billing",
-  "actionType": "azure_function",
-  "title": "Recalculate Billing",
-  "roles": ["admin", "billing_ops"],
-  "actionRef": "azf-recalc-billing",
-  "payload": { "invoiceId": { "fromRow": "id" } },
-  "refreshTableOnSuccess": true,
-  "style": { "variant": "primary" },
-  "icon": { "name": "zap", "position": "left" }
-}</pre>
-      </div>
-      <p><code>authMode</code> on the resolved alias entry is
-        <code>function_key | azure_ad_token | managed_identity | none</code> &mdash; token-based
-        today, Managed Identity is a config-only cutover once provisioned.</p>
-
-      <h3>execute_api &mdash; genuinely external APIs only</h3>
-      <div class="snippet">
-        <pre>{
-  "id": "btn-fetch-carts",
-  "actionType": "execute_api",
-  "title": "Fetch Cart Data",
-  "roles": "admin",
-  "actionRef": "carts-lookup",
-  "payload": { "collectionName": "carts" },
-  "style": { "variant": "success" },
-  "icon": { "name": "grid", "position": "left" }
-}</pre>
-      </div>
-      <p>Resolves into <code>external_api_alias_config</code>. The outbound host must be present
-        in <code>REPORTS_ALLOWED_HOSTS</code> &mdash; the same allowlist reports' own API-type
-        source already enforces.</p>
-
-      <h3>custom_callback &mdash; in-app, client-only</h3>
-      <div class="snippet">
-        <pre>{
-  "id": "btn-refresh",
-  "actionType": "custom_callback",
-  "title": "Refresh Table",
-  "handlerName": "refreshTable",
-  "style": { "variant": "foreground", "iconOnly": true },
-  "icon": { "name": "arrow" },
-  "ariaLabel": "Refresh table"
-}</pre>
-      </div>
-      <p><code>handlerName</code> resolves through a fixed, closed client-side registry &mdash;
-        never an open string-to-function lookup. No server round trip.</p>
-
-      <h3>Destructive action &mdash; confirm</h3>
-      <div class="callout danger">
-        <span class="flag">Always required</span>
-        <div>
-          <pre style="margin:0;">{
-  "id": "btn-delete-collection",
-  "actionType": "azure_function",
-  "title": "Delete Collection",
-  "roles": ["super_admin"],
-  "actionRef": "azf-collection-delete",
-  "payload": { "collectionId": { "fromRow": "id" } },
-  "confirm": { "message": "This permanently deletes the collection. Continue?" },
-  "refreshTableOnSuccess": true,
-  "style": { "variant": "danger", "fontWeight": "bold" },
-  "icon": { "name": "trash", "position": "left" }
-}</pre>
-        </div>
-      </div>
-    </section>
-
-    <section class="phase" id="phase-7">
-      <div class="phase-head">
-        <span class="phase-num">07</span>
         <h2 class="phase-title">Full combined example</h2>
       </div>
       <p>Every feature above, in one <code>TableMeta</code> object &mdash; extends the real config
-        already shipping in <code>configs/sidebar.tsx</code> with an <code>actionButtons</code> array.</p>
+        already shipping in <code>configs/sidebar.tsx</code>.</p>
       <div class="snippet">
         <div class="snippet-label">config.table (full)</div>
         <pre>{
@@ -925,28 +823,6 @@
   "hidden": ["object"],
   "date": [
     { "columns": ["date2"], "type": "datetime", "format": "DD/MM/YYYY HH:mm:ss" }
-  ],
-  "actionButtons": [
-    {
-      "id": "btn-azf-recalc",
-      "actionType": "azure_function",
-      "title": "Recalculate",
-      "roles": ["admin"],
-      "actionRef": "azf-recalc-billing",
-      "payload": { "invoiceId": { "fromRow": "id" } },
-      "refreshTableOnSuccess": true,
-      "style": { "variant": "primary" },
-      "icon": { "name": "zap", "position": "left" }
-    },
-    {
-      "id": "btn-open",
-      "actionType": "redirect",
-      "title": "Open",
-      "url": "https://example.com/",
-      "target": "_blank",
-      "style": { "variant": "secondary" },
-      "icon": { "name": "external", "position": "right" }
-    }
   ]
 }</pre>
       </div>
@@ -963,14 +839,13 @@
           library likely accepts more.</li>
         <li><code>TableMetaLinkConfig</code>'s <code>[key: string]: any</code> means any field name
           is technically accepted &mdash; treat anything not shown in &sect;3 as unverified.</li>
-        <li><code>actionButtons</code> was added 2026-09-24 &mdash; spec-verified against
-          <code>types/action-button.d.ts</code>, not yet exercised by a real production sidebar
-          config.</li>
+        <li><code>actionButtons</code> (Phase 2) is intentionally not covered here &mdash; it has its
+          own separate design doc and will get its own field-guide section later.</li>
       </ul>
     </section>
 
     <footer class="doc-foot">
-      Source repo: ACFExtension &middot; generated from notes/provisioning/table-meta-config.md
+      Source repo: ACFExtension &middot; generated from notes/provisioning/table-meta-config.md &middot; Phase 1
     </footer>
   </main>
 </div>
