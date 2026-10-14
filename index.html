@@ -1055,7 +1055,7 @@
         <code>id = 123</code>, the query runs with 123. It works for menu and global variables alike. Each
         <code>((column))</code> becomes a real SQL parameter (never pasted into the text), so do not put it in
         quotes. Only a cell button has a row: a toolbar button using <code>((column))</code> is refused. The
-        variable must be a <code>static</code> text; a column the row lacks gives NULL.</p>
+        variable must be a <code>static</code> text; a column the row lacks shows an error toast ("Missing column") and nothing runs.</p>
     </section>
 
     <section class="phase" id="open">
