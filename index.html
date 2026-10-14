@@ -566,7 +566,7 @@
   <aside class="rail">
     <div class="rail-mark">
       Field Guide
-      <small>Table meta config &middot; Phase 1</small>
+      <small>Table meta config</small>
     </div>
     <nav id="railnav">
       <a href="#top" class="active"><span class="num">&middot;</span> Overview</a>
@@ -577,6 +577,9 @@
       <a href="#phase-4"><span class="num">04</span> Date / time cells</a>
       <a href="#phase-5"><span class="num">05</span> Image / truncate / disabled</a>
       <a href="#phase-6"><span class="num">06</span> Full combined example</a>
+      <a href="#phase-7"><span class="num">07</span> Code cells</a>
+      <a href="#phase-8"><span class="num">08</span> Vertical (record) layout</a>
+      <a href="#phase-9"><span class="num">09</span> Drill buttons &amp; variables</a>
       <a href="#open"><span class="num">&middot;</span> Open questions</a>
     </nav>
   </aside>
@@ -592,9 +595,9 @@
       <div class="meta-row">
         <span><strong>Verified against</strong> types/tables.d.ts, configs/sidebar.tsx, components/ui/table/**</span>
         <span><strong>Scope</strong> report-table cell rendering (TableMeta)</span>
-        <span><strong>Last updated</strong> 2026-09-25</span>
+        <span><strong>Last updated</strong> 2026-10-14</span>
       </div>
-      <div class="not-shipped">Phase 1 only &mdash; action buttons (actionButtons) are Phase 2, a separate guide</div>
+      <div class="not-shipped">Sections 07&ndash;09 are new: code cells, the vertical (record) layout, and drill buttons with variables. Toolbar <code>actionButtons</code> for pipelines are still a separate guide</div>
     </div>
 
     <section class="phase" id="thesis" style="scroll-margin-top: 2rem;">
@@ -650,7 +653,11 @@
   "hidden": ["object", "_uuid"]
 }</pre>
       </div>
-      <p><code>align</code> keys are <code>"start" | "center" | "end"</code>. <code>hidden</code> columns
+      <p><code>align</code> keys are <code>"start" | "center" | "end"</code>. <code>"*"</code> stands
+        for every column, and a column named in a list wins over it &mdash;
+        <code>{ "start": ["*"], "end": ["amount"] }</code> right-aligns <code>amount</code> and
+        left-aligns the rest. In the vertical (record) layout, columns with no alignment are
+        left-aligned by default. <code>hidden</code> columns
         are still fetched but never rendered or toggle-able &mdash; different from a column simply not
         being in the report's <code>columns</code> list.</p>
     </section>
@@ -942,6 +949,98 @@
       </div>
     </section>
 
+    <section class="phase" id="phase-7">
+      <div class="phase-head">
+        <span class="phase-num">07</span>
+        <h2 class="phase-title">Code cells</h2>
+      </div>
+      <p>For a column whose value is SQL or JSON text (a stored <code>query</code>, a
+        <code>settings</code> blob). The cell shows a highlighted, collapsed block with
+        &ldquo;Show more&rdquo; and a copy button. <code>columns</code> may be one name or a list;
+        a bare column name uses the defaults.</p>
+      <div class="snippet">
+        <div class="snippet-label">TableMeta.code</div>
+        <pre>{
+  "code": [
+    { "columns": "query", "language": "sql", "lines": 3 },
+    { "columns": ["settings", "payload"], "language": "json", "lines": 6, "copy": false }
+  ]
+}</pre>
+      </div>
+      <p><code>language</code> is <code>"sql"</code> or <code>"json"</code>; <code>lines</code> is how many lines show
+        before &ldquo;Show more&rdquo;. A SQL <code>NULL</code> shows as <code>null</code>.</p>
+    </section>
+
+    <section class="phase" id="phase-8">
+      <div class="phase-head">
+        <span class="phase-num">08</span>
+        <h2 class="phase-title">Vertical (record) layout</h2>
+      </div>
+      <p>Shows each row as <em>label | value</em> instead of a table row &mdash; the right shape for
+        one user, one order, one device. It reuses the same cell renderer, so <strong>every</strong>
+        setting in this guide (status, date, link, button, code, object &hellip;) applies by column name.
+        Several rows stack as &ldquo;Record 1&rdquo;, &ldquo;Record 2&rdquo; &hellip;; the page-size selector is
+        hidden.</p>
+      <div class="snippet">
+        <div class="snippet-label">config.table &mdash; a report page that is one record</div>
+        <pre>{
+  "layout": "vertical",
+  <span class="cm">// optional: show a Table / Record switch so viewers can change it themselves.</span>
+  <span class="cm">// "layout" is what it opens with; the pick is not remembered after a reload.</span>
+  "layoutSwitch": true
+}</pre>
+      </div>
+      <p>Use a query that returns one row (for example <code>SELECT TOP 1 &hellip;</code> or a
+        <code>WHERE id = &hellip;</code>). Saved queries must not contain <code>ORDER BY</code> &mdash; the
+        server wraps the query in a sub-select to discover its columns.</p>
+    </section>
+
+    <section class="phase" id="phase-9">
+      <div class="phase-head">
+        <span class="phase-num">09</span>
+        <h2 class="phase-title">Drill buttons &amp; variables</h2>
+      </div>
+      <p>A <code>button</code> cell (or a toolbar action button) with
+        <code>actionType: "sql_report"</code> opens another SQL result for the clicked row. The query
+        is resolved on the server from the saved sidebar config &mdash; the browser only sends the
+        row values, never SQL.</p>
+      <div class="snippet">
+        <div class="snippet-label">TableMeta.button &mdash; drill from a cell</div>
+        <pre>{
+  "button": [{
+    "columns": ["id"],
+    "config": {
+      "actionType": "sql_report",
+      "alias": "Sales-alias",
+      "query": "SELECT id, orderDate FROM dbo.Orders WHERE customerId = @customer",
+      "params": { "customer": { "fromRow": "id" } },
+      "open": "page",            <span class="cm">// "page" (default, /drill) or "dialog"</span>
+      "layout": "vertical",      <span class="cm">// show the result as a record</span>
+      "pageTitle": "{{company}}: orders"
+    }
+  }]
+}</pre>
+      </div>
+      <p>Limits: a <code>sql_report</code> button inside a drilled table is not supported (the view
+        index refers to the parent's button list); use a redirect button there.</p>
+      <div class="snippet">
+        <div class="snippet-label">Variables &mdash; <code>{{name}}</code> in titles and labels</div>
+        <pre>{
+  <span class="cm">// at the ROOT of the sidebar document (global), or in one item's config.variables</span>
+  "variables": [{
+    "name": "company",
+    "resolution_priority": [
+      { "priority": 1, "source_type": "static", "config": { "value": "Acme Corp" } }
+    ]
+  }]
+}</pre>
+      </div>
+      <p>Sources: <code>static</code>, <code>api</code>, <code>sql</code>, <code>cosmosDB</code>; menu-level variables
+        override global ones. They are resolved in the browser for the open menu item. Variables work in
+        titles and settings, <strong>not</strong> inside the SQL text. The syntax is
+        <code>{{name}}</code>, not <code>${name}</code>.</p>
+    </section>
+
     <section class="phase" id="open">
       <div class="phase-head">
         <span class="phase-num">&middot;</span>
@@ -953,13 +1052,13 @@
           library likely accepts more.</li>
         <li><code>TableMetaLinkConfig</code>'s <code>[key: string]: any</code> means any field name
           is technically accepted &mdash; treat anything not shown in &sect;3 as unverified.</li>
-        <li><code>actionButtons</code> (Phase 2) is intentionally not covered here &mdash; it has its
-          own separate design doc and will get its own field-guide section later.</li>
+        <li>Pipeline <code>actionButtons</code> (ADF) are intentionally not covered here &mdash; they
+          have their own design doc.</li>
       </ul>
     </section>
 
     <footer class="doc-foot">
-      Source repo: ACFExtension &middot; generated from notes/provisioning/table-meta-config.md &middot; Phase 1
+      Source repo: ACFExtension &middot; generated from notes/provisioning/table-meta-config.md
     </footer>
   </main>
 </div>
