@@ -1036,9 +1036,26 @@
 }</pre>
       </div>
       <p>Sources: <code>static</code>, <code>api</code>, <code>sql</code>, <code>cosmosDB</code>; menu-level variables
-        override global ones. They are resolved in the browser for the open menu item. Variables work in
-        titles and settings, <strong>not</strong> inside the SQL text. The syntax is
-        <code>{{name}}</code>, not <code>${name}</code>.</p>
+        override global ones. They are resolved in the browser for the open menu item and work in titles,
+        labels and table settings. The syntax is <code>{{name}}</code>, not <code>${name}</code>.</p>
+      <div class="snippet">
+        <div class="snippet-label">A query stored in a variable, filled from the clicked row</div>
+        <pre>{
+  <span class="cm">// variable (menu: config.variables, or global: root variables) &mdash; static text</span>
+  "name": "orders-of-customer",
+  "resolution_priority": [{ "priority": 1, "source_type": "static",
+    "config": { "value": "SELECT id, orderDate FROM dbo.Orders WHERE customerId = ((id))" } }]
+}
+
+<span class="cm">// cell button on any column of the same report</span>
+{ "actionType": "sql_report", "alias": "Sales-alias", "query": "{{orders-of-customer}}" }</pre>
+      </div>
+      <p>A <code>sql_report</code> button may use <code>{{name}}</code> as its whole query. Inside the variable,
+        <code>((column))</code> is the <strong>clicked row's</strong> value of that column &mdash; if the row has
+        <code>id = 123</code>, the query runs with 123. It works for menu and global variables alike. Each
+        <code>((column))</code> becomes a real SQL parameter (never pasted into the text), so do not put it in
+        quotes. Only a cell button has a row: a toolbar button using <code>((column))</code> is refused. The
+        variable must be a <code>static</code> text; a column the row lacks gives NULL.</p>
     </section>
 
     <section class="phase" id="open">
